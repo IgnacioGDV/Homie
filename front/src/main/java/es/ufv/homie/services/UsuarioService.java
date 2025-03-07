@@ -8,6 +8,8 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
+import com.google.gson.JsonSyntaxException;
+
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -31,39 +33,35 @@ public class UsuarioService implements Serializable {
                 .GET()
                 .build();
 
+        HttpResponse<String> response = null; // Inicializamos la variable aquí
+
         // Enviar la solicitud y manejar la respuesta
         try {
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            Type mapType = new TypeToken<ArrayList<Usuario>>() {
-            }.getType();
+            response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            Type mapType = new TypeToken<ArrayList<Usuario>>() {}.getType();
+
+            // Imprimir la respuesta del servidor para verificar el contenido
+            System.out.println("Respuesta del servidor: " + response.body());
+
+            // Deserializar la respuesta usando Gson, esperando un array de usuarios
             ArrayList<Usuario> usuarios = gson.fromJson(response.body(), mapType);
             return usuarios;
+
+        } catch (JsonSyntaxException e) {
+            // Manejo de excepción si el JSON no tiene el formato esperado
+            System.out.println("Error al deserializar la respuesta: " + e.getMessage());
+            if (response != null) {
+                System.out.println("Respuesta que causó el error: " + response.body());
+            }
+            return null;
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    public Usuario getUser(String id) {
-        Gson gson = new Gson();
-        HttpClient client = HttpClient.newHttpClient();
 
-        // Crear una solicitud HTTP de tipo GET
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(String.format(URL, '/'+ id))) // Reemplaza con la URL de tu API
-                .GET()
-                .build();
 
-        // Enviar la solicitud y manejar la respuesta
-        try {
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            Usuario usuario = gson.fromJson(response.body(), Usuario.class);
-            return usuario;
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
 
     public Usuario addUser(Usuario usuario) {
         Gson gson = new Gson();
@@ -129,5 +127,7 @@ public class UsuarioService implements Serializable {
             return false;
         }
     }
+
+
 
 }

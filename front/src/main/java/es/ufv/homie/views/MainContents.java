@@ -13,6 +13,7 @@ import es.ufv.homie.services.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class MainContents extends VerticalLayout {
@@ -45,7 +46,13 @@ public class MainContents extends VerticalLayout {
                         })
         );
 
-        grid.setItems(usuarios);
+        if (usuarios != null) {
+            grid.setItems(usuarios);
+        } else {
+            grid.setItems(Collections.emptyList());
+        }
+
+
 
         grid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
 

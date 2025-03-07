@@ -71,7 +71,6 @@ public class UsuarioService {
                 doc.add(new Paragraph("NIF: " + usuario.getNif()));
                 doc.add(new Paragraph("Email: " + usuario.getEmail()));
                 doc.add(new Paragraph("Dirección: " + usuario.getDireccion().toString()));
-                doc.add(new Paragraph("Método de pago: " + usuario.getMetodoPago().toString()));
                 doc.add(new Paragraph(" "));
             }
             doc.close();
