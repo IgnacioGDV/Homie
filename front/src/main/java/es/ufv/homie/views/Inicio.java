@@ -99,18 +99,24 @@ public class Inicio extends HorizontalLayout {
         HorizontalLayout navButtons = new HorizontalLayout(exploreButton, savedButton, settingsButton, profileButton);
         navButtons.addClassName("nav-buttons");
 
-        // Estilo para Navbar y botones
-        navBar.getStyle().set("background-color", "#003366");  // Azul oscuro para el navbar
-        navBar.getStyle().set("color", "white");  // Texto en blanco para todo el navbar
+        // Ajustar estilos del navbar
+        navBar.getStyle()
+                .set("background-color", "#003366")  // Azul oscuro para el navbar
+                .set("color", "white")  // Texto en blanco
+                .set("border-radius", "10px")  // Bordes redondeados
+                .set("box-shadow", "0px 4px 10px rgba(0, 0, 0, 0.2)"); // Sombreado suave
 
-        // Cambiar color de 'Explorar' a un azul menos oscuro
-        exploreButton.getStyle().set("background-color", "#1976D2");  // Azul menos oscuro para "Explorar"
-        exploreButton.getStyle().set("color", "white");  // Texto blanco para el botón
+        // Ajustar botones del navbar
+        exploreButton.getStyle().set("background-color", "#1976D2").set("color", "white");
         savedButton.getStyle().set("color", "white");
         settingsButton.getStyle().set("color", "white");
         profileButton.getStyle().set("color", "white");
 
+        // Añadir logo y botones al navbar
         navBar.add(logoNavbar, navButtons);
+        navBar.setAlignItems(Alignment.CENTER);
+        navBar.setWidthFull();
+        navBar.expand(navButtons); // Para que los botones se alineen bien
 
         // Logo encima de la barra de búsqueda
         Image logoSearch = new Image("icons/homiepng.png", "Logo de Homie");

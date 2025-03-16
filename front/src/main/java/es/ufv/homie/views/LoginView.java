@@ -9,9 +9,11 @@ import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouterLink;
 import es.ufv.homie.services.UsuarioService;
+import com.vaadin.flow.component.html.Span;
 
 @CssImport("./themes/styles/styles.css") // Importa la hoja de estilos
 @Route("login") // Ruta de acceso a la vista de Login
@@ -22,6 +24,7 @@ public class LoginView extends VerticalLayout {
     public LoginView(UsuarioService usuarioService) {
         this.usuarioService = usuarioService;
         setAlignItems(Alignment.CENTER); // Centrar contenido
+
         // Logo de la aplicación
         Image logo = new Image("icons/homiepng.png", "Logo de Homie");
         logo.addClassName("login-logo");
@@ -41,17 +44,28 @@ public class LoginView extends VerticalLayout {
         PasswordField password = new PasswordField("Contraseña");
         password.addClassName("login-input");
 
+        // Mensaje de error
+        Span errorMessage = new Span();
+        errorMessage.addClassName("error-message");
+        errorMessage.getStyle().set("color", "red");
+        errorMessage.getStyle().set("font-size", "14px");
+
         Button loginButton = new Button("Iniciar sesión", e -> {
-            if (usuarioService.authenticate(username.getValue(), password.getValue())) {
-                getUI().ifPresent(ui -> ui.navigate("inicio"));
+            String user = username.getValue();
+            String pass = password.getValue();
+
+            if (!usuarioService.exists(user)) {
+                errorMessage.setText("El usuario no está registrado. Por favor, regístrate.");
+            } else if (!usuarioService.authenticate(user, pass)) {
+                errorMessage.setText("Contraseña incorrecta. Inténtalo de nuevo.");
             } else {
-                username.setErrorMessage("Credenciales incorrectas");
-                password.setErrorMessage("Credenciales incorrectas");
+                getUI().ifPresent(ui -> ui.navigate("inicio"));
             }
         });
+
         loginButton.addClassName("login-button");
 
-        formLayout.add(username, password, loginButton);
+        formLayout.add(username, password, loginButton, errorMessage);
 
         // Enlace de registro
         Div registerContainer = new Div(new Text("¿No tienes cuenta? "), new RouterLink("Regístrate aquí", RegisterView.class));

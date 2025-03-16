@@ -94,19 +94,10 @@
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.form-container {
-    background-color: #ffffff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    margin-top: 50px;
-}
-
 .login-input {
     width: 100%;
     margin-bottom: 15px;
 }
-
 
 .login-button {
     width: 100%;
@@ -127,20 +118,20 @@
 .navbar {
     width: 100%;
     height: 80px;
-    background-color: #003366/* Morado clarito */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    background-color: #003366;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Sombra suave */
     display: flex;
     align-items: center;
-    justify-content: flex-end; /* Alineación a la derecha */
+    justify-content: space-between;
     padding: 0 20px;
-   /
+    border-radius: 10px; /* Bordes redondeados */
 }
 
 /* Logo del Navbar a la izquierda */
 .logo-navbar {
-    width: 40px;
-    height: 40px;
-    margin-right: 20px;
+    width: 60px;
+    height: 60px;
+    margin-left: 10px; /* Lo pega más a la izquierda */
 }
 
 /* Contenedor de botones del navbar */
