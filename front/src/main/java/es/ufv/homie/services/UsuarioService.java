@@ -1,133 +1,48 @@
 package es.ufv.homie.services;
 
-import java.io.IOException;
-import java.io.Serializable;
-import java.lang.reflect.Type;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.util.ArrayList;
-import com.google.gson.JsonSyntaxException;
-
-
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import es.ufv.homie.model.Usuario;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+
 @Service
-public class UsuarioService implements Serializable {
+public class UsuarioService {
 
+    // Instancia del codificador de contraseñas
+    private final BCryptPasswordEncoder passwordEncoder;
 
-//    private static final String URL = "http://back:8080/api/v1/usuarios%s";
-    private static final String URL = "http://localhost:8080/api/v1/usuarios%s";
+    // Aquí simulamos una base de datos con un usuario de ejemplo, con la contraseña cifrada
+    private String email = "usuario@dominio.com";
+    private String passwordHash = "$2a$10$Vbv5YPxjSxtQys5kC0wQ8e.KPb.KbHHTQOuwNrQSiVOwNo4/LoqRi";  // Contraseña "1234" cifrada con bcrypt
+    private String phone; // Nuevo campo: teléfono
+    private LocalDate birthDate; // Nuevo campo: fecha de nacimiento
+    private String userType; // Nuevo campo: tipo de usuario ("Anfitrión" o "Huésped")
 
-    public ArrayList<Usuario> getUsers() {
-        Gson gson = new Gson();
-        HttpClient client = HttpClient.newHttpClient();
-
-        // Crear una solicitud HTTP de tipo GET
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(String.format(URL, ""))) // Reemplaza con la URL de tu API
-                .GET()
-                .build();
-
-        HttpResponse<String> response = null; // Inicializamos la variable aquí
-
-        // Enviar la solicitud y manejar la respuesta
-        try {
-            response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            Type mapType = new TypeToken<ArrayList<Usuario>>() {}.getType();
-
-            // Imprimir la respuesta del servidor para verificar el contenido
-            System.out.println("Respuesta del servidor: " + response.body());
-
-            // Deserializar la respuesta usando Gson, esperando un array de usuarios
-            ArrayList<Usuario> usuarios = gson.fromJson(response.body(), mapType);
-            return usuarios;
-
-        } catch (JsonSyntaxException e) {
-            // Manejo de excepción si el JSON no tiene el formato esperado
-            System.out.println("Error al deserializar la respuesta: " + e.getMessage());
-            if (response != null) {
-                System.out.println("Respuesta que causó el error: " + response.body());
-            }
-            return null;
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-            return null;
-        }
+    // Constructor
+    public UsuarioService() {
+        this.passwordEncoder = new BCryptPasswordEncoder();
     }
 
-
-
-
-    public Usuario addUser(Usuario usuario) {
-        Gson gson = new Gson();
-        HttpClient client = HttpClient.newHttpClient();
-
-        // Crear una solicitud HTTP de tipo POST
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(String.format(URL, "")))
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(gson.toJson(usuario)))
-                .build();
-
-        // Enviar la solicitud y manejar la respuesta
-        try {
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            Usuario user = gson.fromJson(response.body(), Usuario.class);
-            return user;
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-            return null;
+    // Método para autenticar al usuario
+    public boolean authenticate(String email, String password) {
+        if (this.email.equals(email)) {
+            return passwordEncoder.matches(password, this.passwordHash); // Verifica si la contraseña introducida coincide con el hash
         }
+        return false;
     }
 
-    public Usuario updateUser(String id, Usuario usuario) {
-        Gson gson = new Gson();
-        HttpClient client = HttpClient.newHttpClient();
-
-
-        System.out.println(gson.toJson(usuario));
-        // Crear una solicitud HTTP de tipo PUT
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(String.format(URL, "/" + id)))
-                .header("Content-Type", "application/json")
-                .PUT(HttpRequest.BodyPublishers.ofString(gson.toJson(usuario)))
-                .build();
-
-        // Enviar la solicitud y manejar la respuesta
-        try {
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            Usuario user = gson.fromJson(response.body(), Usuario.class);
-            return user;
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-            return null;
-        }
+    // Método para registrar un nuevo usuario
+    public boolean registerUser(String email, String password, String phone, LocalDate birthDate, String userType) {
+        this.email = email;
+        this.passwordHash = passwordEncoder.encode(password); // Guarda la contraseña cifrada
+        this.phone = phone; // Guarda el teléfono
+        this.birthDate = birthDate; // Guarda la fecha de nacimiento
+        this.userType = userType; // Guarda el tipo de usuario ("Anfitrión" o "Huésped")
+        return true;
     }
 
-    public boolean createPDF () {
-        HttpClient client = HttpClient.newHttpClient();
-
-        // Crear una solicitud HTTP de tipo GET
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(String.format(URL, "/pdf" ))) // Reemplaza con la URL de tu API
-                .GET()
-                .build();
-
-        // Enviar la solicitud y manejar la respuesta
-        try {
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            return response.statusCode() == 200;
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-            return false;
-        }
+    // Método para obtener el tipo de usuario (opcional, en caso de necesidad)
+    public String getUserType() {
+        return userType;
     }
-
-
-
 }

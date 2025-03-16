@@ -1,0 +1,236 @@
+/* REGISTER (Mismo estilo que login) */
+.register-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #f4f4f4;
+}
+
+.register-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 3.5rem;
+    color: #003366;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.register-form {
+    display: flex;
+    text-align: center;
+    margin-bottom: 20px;
+    align-items: center;
+    width: 100%;
+    max-width: 400px;
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.register-input {
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+.register-button {
+    width: 100%;
+    background-color: #007bff;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.register-button:hover {
+    background-color: #0056b3;
+}
+
+/* LOGIN */
+.login-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #f4f4f4;
+}
+
+.login-logo {
+    width: 150px;
+    height: auto;
+    margin-bottom: 10px;
+}
+
+.logo1 {
+    width: 200px;
+    height: 200px;
+    margin-bottom: 10px;
+}
+
+.login-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 3.5rem; /* Aumentar tamaño del título */
+    color: #003366; /* Azul navbar */
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.login-form {
+    display: flex;
+    text-align: center;
+    margin-bottom: 20px;
+    align-items: center;
+    width: 100%;
+    max-width: 400px;
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.form-container {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 50px;
+}
+
+.login-input {
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+
+.login-button {
+    width: 100%;
+    background-color: #007bff;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.login-button:hover {
+    background-color: #0056b3;
+}
+
+/* NAVBAR */
+.navbar {
+    width: 100%;
+    height: 80px;
+    background-color: #003366/* Morado clarito */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end; /* Alineación a la derecha */
+    padding: 0 20px;
+   /
+}
+
+/* Logo del Navbar a la izquierda */
+.logo-navbar {
+    width: 40px;
+    height: 40px;
+    margin-right: 20px;
+}
+
+/* Contenedor de botones del navbar */
+.nav-buttons {
+    display: flex;
+    gap: 20px;
+}
+
+/* Estilo de los botones del navbar */
+.nav-buttons .vaadin-button {
+    color: white; /* Letras blancas */
+    font-size: 1.1em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 15px;
+    background: none; /* Sin fondo */
+    border: none; /* Sin borde */
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Efecto hover (cambia el fondo a naranja y el color del texto a blanco) */
+.nav-buttons .vaadin-button:hover {
+    background-color: #FFA500; /* Naranja */
+    color: white; /* Texto blanco */
+}
+
+/* Barra de búsqueda */
+.search-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/*/* Logo sobre la barra de búsqueda */
+  .logo-search {
+      width: 200px;
+      height: 200px;
+      margin-bottom: 20px; /* Espacio entre el logo y la barra de búsqueda */
+  }
+
+  /* Barra de búsqueda */
+  .search-bar {
+      width: 100%; /* Ocupa todo el ancho disponible */
+      align-items: center;
+      gap: 10px; /* Espacio entre los componentes */
+  }
+
+  /* Campo de búsqueda */
+  .search-field {
+      flex-grow: 1; /* Hace que el campo de búsqueda ocupe el espacio disponible */
+      max-width: 600px; /* Limita el ancho máximo a 600px */
+  }
+
+  /* Botón de búsqueda */
+  .search-button {
+      background-color: #007bff;
+      color: white;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+  }
+
+  /* Efecto hover en el botón de búsqueda */
+  .search-button:hover {
+      background-color: #0056b3;
+  }
+
+
+/* Menú de filtros a la izquierda */
+.filter-menu {
+    background-color: #f4f4f4;
+    padding: 10px;
+    border-right: 1px solid #ddd;
+    height: 100vh;
+}
+
+/* Botón de aplicar filtros */
+.apply-filters-button {
+    width: 100%;
+    background-color: #6200ea;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.apply-filters-button:hover {
+    background-color: #3700b3;
+}

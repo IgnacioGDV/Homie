@@ -1,22 +1,15 @@
 package es.ufv.homie;
 
-import com.vaadin.flow.component.page.AppShellConfigurator;
-import com.vaadin.flow.server.PWA;
-import com.vaadin.flow.theme.Theme;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.router.Route;
+import es.ufv.homie.services.UsuarioService;
+import es.ufv.homie.views.MainView;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-/**
- * The entry point of the Spring Boot application.
-
- * Use the @PWA annotation make the application installable on phones, tablets
- * and some desktop browsers.
- *
- */
 @SpringBootApplication
-@PWA(name = "Project Base for Vaadin with Spring", shortName = "Project Base")
-@Theme("my-theme")
-public class Application implements AppShellConfigurator {
+public class Application {
 
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
