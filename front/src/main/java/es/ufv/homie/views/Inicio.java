@@ -5,141 +5,134 @@ import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.NumberField;
-import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
+import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.router.PageTitle;
 
 @Route("inicio")
-@CssImport("./themes/styles/styles.css") // Importar estilos desde CSS
+@CssImport("./themes/styles/styles.css")
 @PageTitle("Inicio")
-public class Inicio extends HorizontalLayout {
+public class Inicio extends VerticalLayout {
 
     public Inicio() {
         setSizeFull();
+        setSpacing(false);
+        setPadding(false);
+        setDefaultHorizontalComponentAlignment(Alignment.CENTER);
 
-        // Menú de filtros a la izquierda (más delgado)
+        /** ==================== NAVBAR ==================== **/
+        HorizontalLayout navBar = new HorizontalLayout();
+        navBar.addClassName("navbar");
+        navBar.setWidthFull();
+
+        // Logo
+        Image homieLogo = new Image("icons/homiepng2.png", "Logo de Homie");
+        homieLogo.addClassName("logo-navbar");
+
+        // Botones del navbar
+        Button exploreButton = new Button("Explorar Ofertas", new Icon(VaadinIcon.SEARCH));
+        Button savedButton = new Button("Guardados", new Icon(VaadinIcon.HEART));
+        Button aboutButton = new Button("Quienes somos", new Icon(VaadinIcon.INFO_CIRCLE));
+        Button profileButton = new Button("Editar Perfil", new Icon(VaadinIcon.USER));
+        exploreButton.addClassName("explore-button");
+        savedButton.addClassName("saved-button");
+        aboutButton.addClassName("about-button");
+        profileButton.addClassName("profile-button");
+
+        HorizontalLayout navButtons = new HorizontalLayout(exploreButton, savedButton, aboutButton, profileButton);
+        navButtons.addClassName("nav-buttons");
+
+        navBar.add(homieLogo, navButtons);
+
+        /** ==================== MENÚ DE FILTROS ==================== **/
         VerticalLayout filterMenu = new VerticalLayout();
         filterMenu.addClassName("filter-menu");
-        filterMenu.setWidth("250px"); // Reducido el ancho
-        filterMenu.getStyle().set("padding", "15px");
+        filterMenu.setWidth("250px");
 
-        // Filtro: Universidad
+        // Universidad
         ComboBox<String> universityFilter = new ComboBox<>("Universidad");
-        universityFilter.setItems(
-                "Universidad Francisco de Vitoria",
-                "Universidad Complutense de Madrid",
-                "Universidad Politécnica de Madrid",
-                "Universidad Autónoma de Madrid",
-                "Universidad Carlos III de Madrid",
-                "Universidad Rey Juan Carlos"
-        );
-        universityFilter.setWidthFull();
+        universityFilter.setItems("UFV", "UCM", "UPM", "UAM", "UC3M", "URJC");
 
-        // Filtro: Rango de precio
+        // Ubicación
+        ComboBox<String> locationFilter = new ComboBox<>("Ubicación");
+        locationFilter.setItems("Alcobendas", "Alcorcón", "Boadilla", "Las Rozas");
+
+        // Rango de precio
         Span priceLabel = new Span("Rango de precio (€)");
         NumberField minPrice = new NumberField("Mín.");
-        minPrice.setWidth("80px");
         minPrice.setValue(200.0);
-        minPrice.setStep(50);
-
+        minPrice.setWidth("50px");
         NumberField maxPrice = new NumberField("Máx.");
-        maxPrice.setWidth("80px");
         maxPrice.setValue(2000.0);
-        maxPrice.setStep(50);
-
+        maxPrice.setWidth("50px");
         HorizontalLayout priceRange = new HorizontalLayout(minPrice, maxPrice);
-        priceRange.setWidthFull();
 
-        // Filtro: Edad máxima
+        // Edad máxima
         Span ageLabel = new Span("Edad máxima");
         NumberField maxAge = new NumberField();
-        maxAge.setWidth("100px");
         maxAge.setValue(30.0);
-        maxAge.setStep(1);
+        maxAge.setWidth("60px");
 
-        // Filtro: Género preferido
+        // Género preferido
         RadioButtonGroup<String> genderFilter = new RadioButtonGroup<>();
         genderFilter.setLabel("Género");
         genderFilter.setItems("Masculino", "Femenino");
 
-        // Botón para aplicar filtros
+        // Piscina
+        RadioButtonGroup<String> poolFilter = new RadioButtonGroup<>();
+        poolFilter.setLabel("Piscina");
+        poolFilter.setItems("Sí", "No");
+
+
+        // Botón aplicar filtros
         Button applyFilters = new Button("Aplicar");
         applyFilters.addClassName("apply-filters-button");
-        applyFilters.setWidthFull();
 
-        // Agregar filtros al menú
-        filterMenu.add(universityFilter, priceLabel, priceRange, ageLabel, maxAge, genderFilter, applyFilters);
+        filterMenu.add(universityFilter, locationFilter, priceLabel, priceRange, ageLabel, maxAge, genderFilter, poolFilter, applyFilters);
 
-        // Contenedor principal (a la derecha)
+        /** ==================== CONTENIDO PRINCIPAL ==================== **/
         VerticalLayout mainContent = new VerticalLayout();
         mainContent.setWidthFull();
         mainContent.setAlignItems(Alignment.CENTER);
 
-        // Navbar
-        HorizontalLayout navBar = new HorizontalLayout();
-        navBar.addClassName("navbar");
+        // Logo principal
+        Image homieLogoCentered = new Image("icons/homiepng.png", "Logo de Homie");
+        homieLogoCentered.addClassName("logo-centered");
 
-        // Logo a la izquierda en el Navbar
-        Image logoNavbar = new Image("icons/homiepng2.png", "Logo de Homie");
-        logoNavbar.addClassName("logo-navbar");
-        logoNavbar.getStyle().setWidth("60px").setHeight("60px");
-
-        // Botones del navbar con iconos
-        Button exploreButton = new Button("Explorar", new Icon(VaadinIcon.SEARCH));
-        Button savedButton = new Button("Guardados", new Icon(VaadinIcon.HEART));
-        Button settingsButton = new Button("Configuración", new Icon(VaadinIcon.COG));
-        Button profileButton = new Button("Perfil", new Icon(VaadinIcon.USER));
-
-        HorizontalLayout navButtons = new HorizontalLayout(exploreButton, savedButton, settingsButton, profileButton);
-        navButtons.addClassName("nav-buttons");
-
-        // Ajustar estilos del navbar
-        navBar.getStyle()
-                .set("background-color", "#003366")  // Azul oscuro para el navbar
-                .set("color", "white")  // Texto en blanco
-                .set("border-radius", "10px")  // Bordes redondeados
-                .set("box-shadow", "0px 4px 10px rgba(0, 0, 0, 0.2)"); // Sombreado suave
-
-        // Ajustar botones del navbar
-        exploreButton.getStyle().set("background-color", "#1976D2").set("color", "white");
-        savedButton.getStyle().set("color", "white");
-        settingsButton.getStyle().set("color", "white");
-        profileButton.getStyle().set("color", "white");
-
-        // Añadir logo y botones al navbar
-        navBar.add(logoNavbar, navButtons);
-        navBar.setAlignItems(Alignment.CENTER);
-        navBar.setWidthFull();
-        navBar.expand(navButtons); // Para que los botones se alineen bien
-
-        // Logo encima de la barra de búsqueda
-        Image logoSearch = new Image("icons/homiepng.png", "Logo de Homie");
-        logoSearch.addClassName("logo-search");
-        logoSearch.getStyle().setWidth("200px").setHeight("200px"); // Tamaño 200x200
-
-        // Barra de búsqueda con botón
+        // Barra de búsqueda
         TextField searchField = new TextField();
-        searchField.setPlaceholder("Buscar pisos...");
+        searchField.setPlaceholder("Busca tu piso...");
         searchField.addClassName("search-field");
-        searchField.setWidth("100%"); // Campo de búsqueda más largo
 
-        Button searchButton = new Button("Buscar");
+        Button searchButton = new Button(new Icon(VaadinIcon.SEARCH));
         searchButton.addClassName("search-button");
 
-        HorizontalLayout searchBar = new HorizontalLayout(logoSearch, searchField, searchButton);
+        HorizontalLayout searchBar = new HorizontalLayout(searchField, searchButton);
         searchBar.addClassName("search-bar");
-        searchBar.setWidthFull(); // Asegura que la barra de búsqueda ocupe todo el espacio disponible
 
-        // Agregar componentes al contenido principal
-        mainContent.add(navBar, searchBar);
+        mainContent.add(homieLogoCentered, searchBar);
 
-        // Agregar todo a la vista (filtros a la izquierda, contenido a la derecha)
-        add(filterMenu, mainContent);
+        /** ==================== FOOTER ==================== **/
+        HorizontalLayout footer = new HorizontalLayout();
+        footer.addClassName("footer");
+        footer.setWidthFull();
+
+        Span copyright = new Span("© 2024 Homie. Todos los derechos reservados.");
+
+        footer.add(copyright);
+
+        /** ==================== ESTRUCTURA FINAL ==================== **/
+        HorizontalLayout layout = new HorizontalLayout(filterMenu, mainContent);
+        layout.setSizeFull();
+        layout.setFlexGrow(1, mainContent);
+
+        add(navBar, layout, footer);
     }
 }

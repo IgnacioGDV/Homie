@@ -1,46 +1,33 @@
 package es.ufv.homie.services;
 
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class UsuarioService {
 
-    private final BCryptPasswordEncoder passwordEncoder;
+    private final Map<String, String> users = new HashMap<>(); // Almacena email -> password
+    private final Map<String, String> roles = new HashMap<>(); // Almacena email -> rol
 
-    private String email = "usuario@dominio.com";
-    private String passwordHash = "$2a$10$Vbv5YPxjSxtQys5kC0wQ8e.KPb.KbHHTQOuwNrQSiVOwNo4/LoqRi";  // "1234" cifrada con bcrypt
-    private String phone;
-    private LocalDate birthDate;
-    private String userType;
-
-    public UsuarioService() {
-        this.passwordEncoder = new BCryptPasswordEncoder();
+    // Método para registrar un nuevo usuario con rol
+    public void registerUser(String email, String password, String phone, String birthDate, String role) {
+        users.put(email, password);
+        roles.put(email, role); // Guarda el rol del usuario
     }
 
-    public boolean authenticate(String email, String password) {
-        if (this.email.equals(email)) {
-            return passwordEncoder.matches(password, this.passwordHash);
-        }
-        return false;
+    // Método para verificar si el usuario existe
+    public boolean exists(String username) {
+        return users.containsKey(username);
     }
 
-    public boolean registerUser(String email, String password, String phone, LocalDate birthDate, String userType) {
-        this.email = email;
-        this.passwordHash = passwordEncoder.encode(password);
-        this.phone = phone;
-        this.birthDate = birthDate;
-        this.userType = userType;
-        return true;
+    // Método para autenticar al usuario
+    public boolean authenticate(String username, String password) {
+        return password.equals(users.get(username)); // Verifica que la contraseña coincida
     }
 
-    public boolean exists(String email) {
-        return this.email.equals(email);  // Verifica si el usuario ya está registrado
-    }
-
-    public String getUserType() {
-        return userType;
+    // Método para obtener el rol del usuario
+    public String getUserRole(String username) {
+        return roles.get(username); // Retorna el rol almacenado
     }
 }

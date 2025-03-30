@@ -1,76 +1,90 @@
 package es.ufv.homie.views;
 
-import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.CssImport;
-import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouterLink;
 import es.ufv.homie.services.UsuarioService;
 import com.vaadin.flow.component.html.Span;
 
-@CssImport("./themes/styles/styles.css") // Importa la hoja de estilos
-@Route("login") // Ruta de acceso a la vista de Login
-public class LoginView extends VerticalLayout {
+@CssImport("./themes/styles/login.css")
+@Route("login")
+public class LoginView extends Div {
 
     private final UsuarioService usuarioService;
 
     public LoginView(UsuarioService usuarioService) {
         this.usuarioService = usuarioService;
-        setAlignItems(Alignment.CENTER); // Centrar contenido
+        addClassName("login-container");
 
-        // Logo de la aplicación
+        // Sección izquierda (formulario)
+        Div leftSection = new Div();
+        leftSection.addClassName("login-left");
+
         Image logo = new Image("icons/homiepng.png", "Logo de Homie");
         logo.addClassName("login-logo");
 
-        // Título del login
-        Text title = new Text("¡Bienvenido a Homie!");
-        Div titleContainer = new Div(title);
-        titleContainer.addClassName("login-title");
+        H1 title = new H1("Bienvenidos a Homie!");
+        title.addClassName("login-title");
 
-        // Formulario de login
-        FormLayout formLayout = new FormLayout();
-        formLayout.addClassName("login-form");
+        Paragraph description = new Paragraph("La app que te facilitará el acceso a vivienda para estudiantes");
 
-        TextField username = new TextField("Usuario");
+        TextField username = new TextField("User name");
+        username.setPlaceholder("Introduce tu nombre de usuario");
         username.addClassName("login-input");
 
         PasswordField password = new PasswordField("Contraseña");
+        password.setPlaceholder("Introduce tu contraseña");
         password.addClassName("login-input");
 
-        // Mensaje de error
-        Span errorMessage = new Span();
-        errorMessage.addClassName("error-message");
-        errorMessage.getStyle().set("color", "red");
-        errorMessage.getStyle().set("font-size", "14px");
-
-        Button loginButton = new Button("Iniciar sesión", e -> {
+        Button loginButton = new Button("Login", e -> {
             String user = username.getValue();
             String pass = password.getValue();
 
             if (!usuarioService.exists(user)) {
-                errorMessage.setText("El usuario no está registrado. Por favor, regístrate.");
+                Notification.show("El usuario no está registrado. Por favor, regístrate.");
             } else if (!usuarioService.authenticate(user, pass)) {
-                errorMessage.setText("Contraseña incorrecta. Inténtalo de nuevo.");
+                Notification.show("Contraseña incorrecta. Inténtalo de nuevo.");
             } else {
-                getUI().ifPresent(ui -> ui.navigate("inicio"));
+                String userRole = usuarioService.getUserRole(user);
+                if ("Anfitrión".equals(userRole)) {
+                    getUI().ifPresent(ui -> ui.navigate("crear-oferta"));
+                } else {
+                    getUI().ifPresent(ui -> ui.navigate("inicio"));
+                }
             }
         });
 
         loginButton.addClassName("login-button");
 
-        formLayout.add(username, password, loginButton, errorMessage);
+        RouterLink registerLink = new RouterLink("Regístrate aquí", RegisterView.class);
+        Div registerContainer = new Div(new Span("¿Eres nuevo? "), registerLink);
 
-        // Enlace de registro
-        Div registerContainer = new Div(new Text("¿No tienes cuenta? "), new RouterLink("Regístrate aquí", RegisterView.class));
+        VerticalLayout formLayout = new VerticalLayout(logo, title, description, username, password, loginButton, registerContainer);
+        formLayout.addClassName("login-form");
 
-        // Agregar componentes en orden
-        add(logo, titleContainer, formLayout, registerContainer);
+        leftSection.add(formLayout);
+
+        // Sección derecha (fondo azul con imágenes)
+        Div rightSection = new Div();
+        rightSection.addClassName("login-right");
+
+        Image img1 = new Image("icons/img.png", "Casa 1");
+        Image img2 = new Image("icons/img_1.png", "Casa 2");
+        img1.addClassName("login-right-img");
+        img2.addClassName("login-right-img");
+
+        rightSection.add(img1, img2);
+
+        // Agregar ambas secciones al contenedor principal
+        add(leftSection, rightSection);
     }
 }
