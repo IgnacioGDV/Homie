@@ -1,77 +1,105 @@
-/* 🎨 Estilo General */
-
-/* 📌 Contenedor principal */
-.crear-oferta-container {
-    background: rgba(255, 255, 255, 0.1); /* Fondo semi-transparente */
-    backdrop-filter: blur(10px); /* Efecto de vidrio esmerilado */
-    border-radius: 16px;
-    padding: 30px;
-    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.3);
-    width: 50%;
-    text-align: center;
-    color: white;
+/* Estilo general para la página */
+:root {
+    --color-primario: #003366; /* Azul oscuro */
+    --color-secundario: #ffffff; /* Blanco */
+    --color-acento: #4CAF50; /* Verde suave para botones */
+    --color-texto: #333333; /* Texto gris oscuro */
 }
 
-/* 🏠 Logo */
-.logo-centered {
-    width: 100px;
-    margin-bottom: 15px;
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--color-secundario);
+    color: var(--color-texto);
 }
 
-/* 📋 Campos de entrada */
-input, textarea, .vaadin-combo-box, .vaadin-number-field {
+/* Contenedor principal de la vista */
+.vaadin-vertical-layout {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 30px 0;
     width: 100%;
-    border-radius: 8px;
-    padding: 12px;
-    border: none;
-    font-size: 16px;
-    background: rgba(255, 255, 255, 0.2);
-    color: white;
-    margin-top: 8px;
+    background-color: var(--color-secundario);
 }
 
-/* Placeholder blanco */
-input::placeholder, textarea::placeholder {
-    color: rgba(255, 255, 255, 0.7);
+/* Estilo para el logo */
+.logo-centered {
+    max-width: 200px;
+    margin-bottom: 20px;
 }
 
-/* 🔘 Radio Buttons */
-vaadin-radio-group {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
+/* Títulos y subtítulos */
+h1, h2 {
+    color: var(--color-primario);
+    font-size: 2em;
+    margin-bottom: 20px;
 }
 
-/* 📤 Subir imágenes */
-.upload-label {
-    font-size: 14px;
-    margin-top: 10px;
-}
-
-.upload-button {
-    background-color: #ffcc00;
-    color: black;
-    font-weight: bold;
-    border-radius: 8px;
+/* Estilo de los campos de entrada */
+vaadin-text-field, vaadin-text-area, vaadin-combo-box, vaadin-number-field, vaadin-radio-button-group {
+    width: 100%;
+    max-width: 400px;
+    margin-bottom: 20px;
     padding: 10px;
-    width: 50%;
-    text-align: center;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+vaadin-text-field:focus, vaadin-text-area:focus, vaadin-combo-box:focus, vaadin-number-field:focus {
+    border-color: var(--color-primario);
+    box-shadow: 0 0 5px rgba(0, 51, 102, 0.5);
+}
+
+/* Estilo para el botón de publicar */
+.publish-button {
+    background-color: var(--color-primario);
+    color: var(--color-secundario);
+    font-size: 1.2em;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 5px;
     cursor: pointer;
-    margin-top: 10px;
+    width: 100%;
+    max-width: 400px;
+    margin-top: 20px;
+    transition: background-color 0.3s;
 }
 
-.upload-button:hover {
-    background-color: #ffaa00;
+.publish-button:hover {
+    background-color: #001f33; /* Azul más oscuro */
 }
 
-/* 📸 Galería de imágenes */
-.image-gallery {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 10px;
+/* Estilo para el contenedor de la carga de imágenes */
+vaadin-upload {
+    margin-top: 20px;
 }
 
-/* 🖼️ Miniaturas de imágenes */
-.uploaded-image {
+/* Etiquetas de texto */
+vaadin-span {
+    color: var(--color-primario);
+    font-size: 1rem;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+/* Fondo general */
+html, body {
+    height: 100%;
+}
+
+/* División de cada sección */
+vaadin-vertical-layout > div {
+    width: 100%;
+    max-width: 450px;
+}
+
+/* Ajustes de márgenes */
+vaadin-text-field, vaadin-text-area, vaadin-combo-box, vaadin-number-field, vaadin-radio-button-group {
+    margin-bottom: 20px;
+}
+

@@ -158,3 +158,74 @@
     color: white !important;
     transform: scale(1.1);
 }
+
+/* Layout general de las ofertas */
+.offer-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 24px;
+    padding: 24px 12px;
+}
+
+/* Tarjeta individual */
+.offer-card {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    padding: 16px;
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.2s ease-in-out;
+}
+
+.offer-card:hover {
+    transform: scale(1.02);
+}
+
+/* Imagen */
+.offer-card vaadin-image {
+    border-radius: 8px;
+    object-fit: cover;
+    height: 180px;
+    width: 100%;
+}
+
+/* Título */
+.offer-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #1a1a1a;
+    margin-top: 10px;
+}
+
+/* Descripción */
+.offer-description {
+    font-size: 0.95rem;
+    color: #333;
+    text-align: center;
+    margin: 8px 0;
+}
+
+/* Precio */
+.offer-price {
+    font-weight: 600;
+    color: #000;
+    margin-bottom: 12px;
+}
+
+/* Botón */
+.more-info-button {
+    background-color: #1428a0;
+    color: white;
+    font-weight: 500;
+    border-radius: 8px;
+    padding: 8px 16px;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.more-info-button:hover {
+    background-color: #0d1e7f;
+}
