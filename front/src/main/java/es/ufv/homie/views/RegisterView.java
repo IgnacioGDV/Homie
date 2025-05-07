@@ -76,6 +76,13 @@ public class RegisterView extends Div {
                 Notification.show("Las contraseñas no coinciden");
                 return;
             }
+            if (!usuarioService.isValidPassword(password.getValue())) {
+                Notification.show(
+                        "La contraseña debe contener al menos 1 mayúscula, " +
+                                "un mínimo de 2 letras y al menos 8 caracteres"
+                );
+                return;
+            }
 
             usuarioService.registerUser(
                     email.getValue(),

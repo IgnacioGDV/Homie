@@ -1,0 +1,58 @@
+/* Contenedor principal */
+.qs-container {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+}
+
+/* Sección izquierda (texto) */
+.qs-left {
+  width: 50%;
+  background-color: white;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.qs-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 2.5rem;
+  color: #003366;
+  margin-bottom: 20px;
+}
+
+.qs-text {
+  font-size: 1rem;
+  color: #555;
+  line-height: 1.6;
+}
+
+/* Sección derecha (imagen) */
+.qs-right {
+  width: 50%;
+  background-color: #003366;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.qs-image {
+  width: 80%;
+  max-width: 400px;
+  border-radius: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .qs-container {
+    flex-direction: column;
+  }
+  .qs-right {
+    display: none; /* ocultar imagen en móviles */
+  }
+  .qs-left {
+    width: 100%;
+  }
+}
