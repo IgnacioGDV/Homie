@@ -1,4 +1,4 @@
-// Inicio.java (con carrusel de OFERTAS y carrusel de imágenes por oferta)
+// Inicio.java (con carrusel de OFERTAS y carrusel de imágenes por oferta y botón de favoritos)
 package es.ufv.homie.views;
 
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -7,7 +7,6 @@ import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.button.Button;
@@ -19,13 +18,13 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.PageTitle;
 import es.ufv.homie.model.Oferta;
 import es.ufv.homie.services.OfertaService;
-import es.ufv.homie.services.NotificationService;
 
 import java.util.List;
 
 @Route("inicio")
 @CssImport("./themes/styles/styles.css")
 @PageTitle("Inicio")
+
 public class Inicio extends VerticalLayout {
 
     public Inicio() {
@@ -33,7 +32,6 @@ public class Inicio extends VerticalLayout {
         setPadding(true);
         setSpacing(true);
 
-        /** ==================== BARRA DE NAVEGACIÓN Y LOGO ==================== **/
         HorizontalLayout navBar = new HorizontalLayout();
         navBar.addClassName("navbar");
         navBar.setWidthFull();
@@ -42,7 +40,7 @@ public class Inicio extends VerticalLayout {
         homieLogo.addClassName("logo-navbar");
 
         Button exploreButton = new Button("Explorar Ofertas", new Icon(VaadinIcon.SEARCH));
-        Button savedButton = new Button("Guardados", new Icon(VaadinIcon.HEART));
+        Button savedButton = new Button("Guardados", new Icon(VaadinIcon.HEART), e -> getUI().ifPresent(ui -> ui.navigate("mis-favoritos")));
         Button aboutButton = new Button("Quienes somos", new Icon(VaadinIcon.INFO_CIRCLE));
         Button profileButton = new Button("Editar Perfil", new Icon(VaadinIcon.USER));
         exploreButton.addClassName("explore-button");
@@ -55,7 +53,6 @@ public class Inicio extends VerticalLayout {
 
         navBar.add(homieLogo, navButtons);
 
-        /** ==================== MENÚ DE FILTROS ==================== **/
         VerticalLayout filterMenu = new VerticalLayout();
         filterMenu.addClassName("filter-menu");
         filterMenu.setWidth("250px");
@@ -93,7 +90,6 @@ public class Inicio extends VerticalLayout {
 
         filterMenu.add(universityFilter, locationFilter, priceLabel, priceRange, ageLabel, maxAge, genderFilter, poolFilter, applyFilters);
 
-        /** ==================== CONTENIDO PRINCIPAL ==================== **/
         VerticalLayout mainContent = new VerticalLayout();
         mainContent.setWidthFull();
         mainContent.setAlignItems(Alignment.CENTER);
@@ -102,7 +98,6 @@ public class Inicio extends VerticalLayout {
         homieLogoCentered.addClassName("logo-centered");
         mainContent.add(homieLogoCentered);
 
-        /** ==================== CARRUSEL DE OFERTAS ==================== **/
         List<Oferta> ofertas = OfertaService.getOfertas();
         if (!ofertas.isEmpty()) {
             VerticalLayout ofertaCard = new VerticalLayout();
@@ -110,10 +105,14 @@ public class Inicio extends VerticalLayout {
             ofertaCard.setWidth("80%");
 
             Span nombreOferta = new Span();
+            nombreOferta.getStyle().set("font-weight", "bold").set("font-size", "20px");
+
             Span descripcionOferta = new Span();
             Span universidad = new Span();
             Span ubicacion = new Span();
             Span precioOferta = new Span();
+            precioOferta.getStyle().set("font-weight", "bold").set("font-size", "18px");
+
             Image imagenCarrusel = new Image();
             imagenCarrusel.setWidth("100%");
             imagenCarrusel.setHeight("180px");
@@ -123,13 +122,22 @@ public class Inicio extends VerticalLayout {
             Button masInfoButton = new Button("Más Info");
             masInfoButton.addClassName("more-info-button");
 
+            int[] ofertaActual = {0};
+            int[] imagenActual = {0};
+
+            Button guardarButton = new Button(new Icon(VaadinIcon.HEART));
+            guardarButton.addClickListener(e -> {
+                Oferta oferta = ofertas.get(ofertaActual[0]);
+                OfertaService.addFavorito(oferta);
+                Notification.show("¡Añadido a favoritos!");
+            });
+
+            HorizontalLayout botones = new HorizontalLayout(masInfoButton, guardarButton);
+
             HorizontalLayout carruselImagenes = new HorizontalLayout(anteriorImagen, imagenCarrusel, siguienteImagen);
             carruselImagenes.setAlignItems(Alignment.CENTER);
 
-            ofertaCard.add(nombreOferta, descripcionOferta, universidad, ubicacion, precioOferta, carruselImagenes, masInfoButton);
-
-            int[] ofertaActual = {0};
-            int[] imagenActual = {0};
+            ofertaCard.add(nombreOferta, descripcionOferta, universidad, ubicacion, precioOferta, carruselImagenes, botones);
 
             Runnable actualizarVista = () -> {
                 Oferta oferta = ofertas.get(ofertaActual[0]);
@@ -141,27 +149,22 @@ public class Inicio extends VerticalLayout {
 
                 if (oferta.getImagenes() != null && !oferta.getImagenes().isEmpty()) {
                     imagenCarrusel.setSrc("/uploads/" + oferta.getImagenes().get(imagenActual[0]));
-
                 } else {
                     imagenCarrusel.setSrc("icons/piso1.jpg");
                 }
             };
 
             anteriorImagen.addClickListener(e -> {
-                Oferta oferta = ofertas.get(ofertaActual[0]);
                 if (imagenActual[0] > 0) {
                     imagenActual[0]--;
-                    imagenCarrusel.setSrc("/uploads/" + oferta.getImagenes().get(imagenActual[0]));
-
+                    imagenCarrusel.setSrc("/uploads/" + ofertas.get(ofertaActual[0]).getImagenes().get(imagenActual[0]));
                 }
             });
 
             siguienteImagen.addClickListener(e -> {
-                Oferta oferta = ofertas.get(ofertaActual[0]);
-                if (imagenActual[0] < oferta.getImagenes().size() - 1) {
+                if (imagenActual[0] < ofertas.get(ofertaActual[0]).getImagenes().size() - 1) {
                     imagenActual[0]++;
-                    imagenCarrusel.setSrc("/uploads/" + oferta.getImagenes().get(imagenActual[0]));
-
+                    imagenCarrusel.setSrc("/uploads/" + ofertas.get(ofertaActual[0]).getImagenes().get(imagenActual[0]));
                 }
             });
 
@@ -190,7 +193,6 @@ public class Inicio extends VerticalLayout {
             actualizarVista.run();
         }
 
-        /** ==================== FOOTER ==================== **/
         HorizontalLayout footer = new HorizontalLayout();
         footer.addClassName("footer");
         footer.setWidthFull();
@@ -198,7 +200,6 @@ public class Inicio extends VerticalLayout {
         Span copyright = new Span("© 2024 Homie. Todos los derechos reservados.");
         footer.add(copyright);
 
-        /** ==================== ESTRUCTURA FINAL ==================== **/
         HorizontalLayout layout = new HorizontalLayout(filterMenu, mainContent);
         layout.setSizeFull();
         layout.setFlexGrow(1, mainContent);
