@@ -1,0 +1,91 @@
+/* CONTENEDOR GENERAL */
+.favoritos-view {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #f9f9f9;
+}
+
+.favoritos-content {
+    flex: 1;
+    padding: 2rem;
+}
+
+/* NAVBAR */
+.favoritos-navbar {
+    width: 100%;
+    height: 80px;
+    background-color: #000F5E;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
+    border-radius: 0 0 10px 10px;
+    color: white;
+}
+
+.favoritos-logo {
+    width: 70px;
+    height: auto;
+}
+
+.favoritos-nav-buttons {
+    display: flex;
+    gap: 20px;
+}
+
+.favoritos-explore-button,
+.favoritos-about-button,
+.favoritos-profile-button {
+    background: none;
+    border: none;
+    font-size: 1.1em;
+    color: white;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.favoritos-saved-button {
+    background-color: #004aad;
+    color: white;
+    font-size: 1.1em;
+    border-radius: 5px;
+    padding: 6px 12px;
+}
+
+/* FOOTER */
+.favoritos-footer {
+    background-color: #000F5E;
+    color: white;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: auto;
+    border-radius: 10px 10px 0 0;
+    font-size: 1.1em;
+}
+
+/* TARJETAS */
+.favoritos-card {
+    background-color: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    margin-bottom: 20px;
+    width: 90%;
+    max-width: 700px;
+    text-align: center;
+    align-self: center;
+}
+
+.favoritos-card span {
+    display: block;
+    margin: 6px 0;
+}
+
+.favoritos-card img {
+    width: 250px;
+    height: auto;
+    margin-top: 10px;
+    border-radius: 8px;
+}
