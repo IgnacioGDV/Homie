@@ -47,16 +47,16 @@ public class CrearOferta extends VerticalLayout {
 
         TextField tituloOferta = new TextField("Nombre de la oferta");
 
-        ComboBox<String> ubicacion = new ComboBox<>("Ubicación");
-        ubicacion.setItems("Las tablas", "Alcorcón", "Sanchinarro", "Getafe");
+        ComboBox<String> ubicacion = new ComboBox<>("Ubicación por zona");
+        ubicacion.setItems("Alcobendas" ,"Aluche" , "Boadilla" ,"Brunete" , "Pozuelo" ,"Majadahonda","Madrid Centro","Las Tablas","Las Rozas", "Alcorcón", "Sanchinarro", "Getafe","San Sebastián De Los Reyes" , "Villaverde" , "Villaviciosa De Odón" );
 
         ComboBox<Double> numeroInquilinos = new ComboBox<>("Número de huéspedes necesarios");
         numeroInquilinos.setItems(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0);
 
         NumberField precio = new NumberField("Importe a pagar");
-        precio.setPrefixComponent(new Span("$"));
+        precio.setPrefixComponent(new Span("€"));
 
-        ComboBox<String> genero = new ComboBox<>("Género");
+        ComboBox<String> genero = new ComboBox<>("Género con el que prefiere convivir");
         genero.setItems("Masculino", "Femenino", "Sin preferencia");
 
         TextArea descripcion = new TextArea("Descripción");
@@ -71,7 +71,7 @@ public class CrearOferta extends VerticalLayout {
         upload.addSucceededListener(event -> {
             String filename = event.getFileName();
             try (InputStream inputStream = buffer.getInputStream(filename)) {
-                File targetFile = new File("src/main/resources/META-INF/resources/uploads/" + filename);
+                File targetFile = new File("uploads/" + filename);
 
 
 
