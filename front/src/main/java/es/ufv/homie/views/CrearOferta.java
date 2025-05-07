@@ -1,20 +1,27 @@
+// CrearOferta.java (adaptado para múltiples imágenes)
 package es.ufv.homie.views;
 
-import com.vaadin.flow.component.dependency.CssImport;
-import es.ufv.homie.services.NotificationService;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.component.textfield.TextArea;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.upload.Upload;
-import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
 import com.vaadin.flow.component.combobox.ComboBox;
-import com.vaadin.flow.component.textfield.NumberField;
-import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
+import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.Image;
-import com.vaadin.flow.router.Route;
+import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.TextArea;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.textfield.NumberField;
+import com.vaadin.flow.component.upload.Upload;
+import com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer;
 import com.vaadin.flow.router.PageTitle;
+import com.vaadin.flow.router.Route;
+import es.ufv.homie.model.Oferta;
+import es.ufv.homie.services.NotificationService;
+import es.ufv.homie.services.OfertaService;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,140 +30,80 @@ import java.util.List;
 @PageTitle("Crear Oferta")
 public class CrearOferta extends VerticalLayout {
 
-    private final NotificationService notificationService; // Inyecta el servicio de notificación
-    private List<Oferta> ofertas = new ArrayList<>(); // Lista para almacenar las ofertas
-
     public CrearOferta(NotificationService notificationService) {
-        this.notificationService = notificationService;
+        addClassName("crear-oferta-layout");
 
-        // Título de la oferta
-        TextField tituloOferta = new TextField("Título de la oferta");
+        VerticalLayout formularioLayout = new VerticalLayout();
+        formularioLayout.addClassName("formulario-oferta");
 
-        // Descripción
+        Image logo = new Image("icons/homiepng.png", "Homie Logo");
+        logo.addClassName("logo-homie");
+
+        Span titulo = new Span("¡Bienvenido, Anfitrión!");
+        titulo.getStyle().set("font-size", "24px").set("color", "#002147").set("font-weight", "bold");
+
+        Span descripcionIntro = new Span("Crea tu oferta para que los inquilinos de Homie puedan aplicar a ella.");
+        descripcionIntro.getStyle().set("color", "#555").set("font-size", "14px").set("text-align", "center");
+
+        TextField tituloOferta = new TextField("Nombre de la oferta");
+
+        ComboBox<String> ubicacion = new ComboBox<>("Ubicación");
+        ubicacion.setItems("Las tablas", "Alcorcón", "Sanchinarro", "Getafe");
+
+        ComboBox<Double> numeroInquilinos = new ComboBox<>("Número de huéspedes necesarios");
+        numeroInquilinos.setItems(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0);
+
+        NumberField precio = new NumberField("Importe a pagar");
+        precio.setPrefixComponent(new Span("$"));
+
+        ComboBox<String> genero = new ComboBox<>("Género");
+        genero.setItems("Masculino", "Femenino", "Sin preferencia");
+
         TextArea descripcion = new TextArea("Descripción");
 
-        // Universidad
-        ComboBox<String> universidad = new ComboBox<>("Universidad");
-        universidad.setItems("Universidad Francisco de Vitoria", "Universidad Complutense de Madrid",
-                "Universidad Politécnica de Madrid", "Universidad Autónoma de Madrid",
-                "Universidad Carlos III de Madrid", "Universidad Rey Juan Carlos");
-
-        // Ubicación
-        ComboBox<String> ubicacion = new ComboBox<>("Ubicación");
-        ubicacion.setItems("Alcobendas", "Alcorcón", "Boadilla del Monte", "Las Rozas", "San Sebastián de los Reyes",
-                "Las Tablas", "Sanchinarro", "Aluche", "Getafe");
-
-        // Número de inquilinos
-        NumberField numeroInquilinos = new NumberField("Número de inquilinos");
-        numeroInquilinos.setMin(1);
-        numeroInquilinos.setStep(1);
-        numeroInquilinos.setWidth("150px");
-
-        // Edad máxima
-        NumberField edadMaxima = new NumberField("Edad máxima");
-        edadMaxima.setMin(18);
-        edadMaxima.setMax(99);
-        edadMaxima.setStep(1);
-        edadMaxima.setWidth("150px");
-
-        // Subir imágenes
-        MemoryBuffer buffer = new MemoryBuffer();
+        MultiFileMemoryBuffer buffer = new MultiFileMemoryBuffer();
         Upload upload = new Upload(buffer);
         upload.setMaxFiles(8);
         upload.setDropAllowed(true);
+        upload.setUploadButton(new Button("Sube tus fotos"));
 
-        // Precio
-        NumberField precio = new NumberField("Precio (€)");
-        precio.setMin(0);
-        precio.setStep(10);
-        precio.setWidth("150px");
+        List<String> nombresImagenes = new ArrayList<>();
+        upload.addSucceededListener(event -> {
+            String filename = event.getFileName();
+            try (InputStream inputStream = buffer.getInputStream(filename)) {
+                File targetFile = new File("src/main/resources/META-INF/resources/uploads/" + filename);
 
-        // Botón para publicar
-        Button publicarButton = new Button("Publicar Oferta");
 
-        publicarButton.addClickListener(e -> {
-            // Lógica para publicar la oferta
-            String titulo = tituloOferta.getValue();
-            String descripcionOferta = descripcion.getValue();
-            String universidadSeleccionada = universidad.getValue();
-            String ubicacionSeleccionada = ubicacion.getValue();
-            double numeroInquilinosValor = numeroInquilinos.getValue();
-            double edadMaximaValor = edadMaxima.getValue();
-            String imagen = buffer.getFileName(); // Obtiene el nombre del archivo de la imagen subida
-            double precioValor = precio.getValue();
 
-            // Crear la oferta
-            Oferta nuevaOferta = new Oferta(titulo, descripcionOferta, universidadSeleccionada, ubicacionSeleccionada,
-                    numeroInquilinosValor, edadMaximaValor, imagen, precioValor);
 
-            // Añadir la oferta a la lista
-            ofertas.add(nuevaOferta);
+                targetFile.getParentFile().mkdirs();
+                try (FileOutputStream out = new FileOutputStream(targetFile)) {
+                    inputStream.transferTo(out);
+                }
+                nombresImagenes.add(filename);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
 
-            // Mostrar una notificación de éxito
+        Button publicarButton = new Button("Publicar", e -> {
+            Oferta nueva = new Oferta(
+                    tituloOferta.getValue(),
+                    descripcion.getValue(),
+                    "UFV",
+                    ubicacion.getValue(),
+                    precio.getValue(),
+                    nombresImagenes
+            );
+            OfertaService.addOferta(nueva);
             notificationService.showNotification("¡Oferta publicada con éxito!");
-
-            // Redirigir a la página de inicio
             getUI().ifPresent(ui -> ui.navigate("inicio"));
         });
 
-        // Añadir los componentes al layout
-        add(tituloOferta, descripcion, universidad, ubicacion, numeroInquilinos, edadMaxima, upload, precio, publicarButton);
-    }
+        publicarButton.addClassName("publicar-button");
 
-    // Clase interna que representa una oferta
-    public static class Oferta {
-        private String titulo;
-        private String descripcion;
-        private String universidad;
-        private String ubicacion;
-        private double numeroInquilinos;
-        private double edadMaxima;
-        private String imagen;
-        private double precio;
+        formularioLayout.add(logo, titulo, descripcionIntro, tituloOferta, ubicacion, numeroInquilinos, precio, genero, descripcion, upload, publicarButton);
 
-        public Oferta(String titulo, String descripcion, String universidad, String ubicacion, double numeroInquilinos,
-                      double edadMaxima, String imagen, double precio) {
-            this.titulo = titulo;
-            this.descripcion = descripcion;
-            this.universidad = universidad;
-            this.ubicacion = ubicacion;
-            this.numeroInquilinos = numeroInquilinos;
-            this.edadMaxima = edadMaxima;
-            this.imagen = imagen;
-            this.precio = precio;
-        }
-
-        // Getters
-        public String getTitulo() {
-            return titulo;
-        }
-
-        public String getDescripcion() {
-            return descripcion;
-        }
-
-        public String getUniversidad() {
-            return universidad;
-        }
-
-        public String getUbicacion() {
-            return ubicacion;
-        }
-
-        public double getNumeroInquilinos() {
-            return numeroInquilinos;
-        }
-
-        public double getEdadMaxima() {
-            return edadMaxima;
-        }
-
-        public String getImagen() {
-            return imagen;
-        }
-
-        public double getPrecio() {
-            return precio;
-        }
+        add(formularioLayout);
     }
 }

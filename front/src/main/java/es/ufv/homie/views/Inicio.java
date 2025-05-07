@@ -1,21 +1,24 @@
+// Inicio.java (con carrusel de OFERTAS y carrusel de imágenes por oferta)
 package es.ufv.homie.views;
 
-import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
-import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.router.Route;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
+import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.PageTitle;
+import es.ufv.homie.model.Oferta;
+import es.ufv.homie.services.OfertaService;
 import es.ufv.homie.services.NotificationService;
 
 import java.util.List;
@@ -25,41 +28,12 @@ import java.util.List;
 @PageTitle("Inicio")
 public class Inicio extends VerticalLayout {
 
-    private List<CrearOferta.Oferta> ofertas;
-    private final NotificationService notificationService; // Servicio de notificaciones
-
-    public Inicio(List<CrearOferta.Oferta> ofertas, NotificationService notificationService) {
-        this.ofertas = ofertas;
-        this.notificationService = notificationService; // Inyectamos el servicio de notificaciones
-
+    public Inicio() {
         setSizeFull();
-        setSpacing(false);
-        setPadding(false);
-        setDefaultHorizontalComponentAlignment(Alignment.CENTER);
+        setPadding(true);
+        setSpacing(true);
 
-        /** ==================== NOTIFICACIONES ==================== **/
-        // Esta área se usará para mostrar las notificaciones debajo de la barra de búsqueda
-        HorizontalLayout notificationLayout = new HorizontalLayout();
-        notificationLayout.setWidthFull();
-        notificationLayout.setHeight("50px");
-        notificationLayout.setVisible(false); // Inicialmente invisible
-        notificationLayout.addClassName("notification-area");
-
-        add(notificationLayout);
-
-        // Mostrar las notificaciones si es necesario
-        notificationService.addNotificationListener(message -> {
-            notificationLayout.setVisible(true);
-            notificationLayout.removeAll();
-            Span notificationMessage = new Span(message);
-            notificationLayout.add(notificationMessage);
-            // Desaparece después de 5 segundos
-            notificationMessage.getUI().ifPresent(ui -> ui.access(() -> {
-                ui.getPage().executeJs("setTimeout(() => { document.querySelector('.notification-area').style.visibility = 'hidden'; }, 5000);");
-            }));
-        });
-
-        /** ==================== NAVBAR ==================== **/
+        /** ==================== BARRA DE NAVEGACIÓN Y LOGO ==================== **/
         HorizontalLayout navBar = new HorizontalLayout();
         navBar.addClassName("navbar");
         navBar.setWidthFull();
@@ -126,49 +100,95 @@ public class Inicio extends VerticalLayout {
 
         Image homieLogoCentered = new Image("icons/homiepng.png", "Logo de Homie");
         homieLogoCentered.addClassName("logo-centered");
+        mainContent.add(homieLogoCentered);
 
-        TextField searchField = new TextField();
-        searchField.setPlaceholder("Busca tu piso...");
-        searchField.addClassName("search-field");
-
-        Button searchButton = new Button(new Icon(VaadinIcon.SEARCH));
-        searchButton.addClassName("search-button");
-
-        HorizontalLayout searchBar = new HorizontalLayout(searchField, searchButton);
-        searchBar.addClassName("search-bar");
-
-        mainContent.add(homieLogoCentered, searchBar);
-
-        /** ==================== OFERTAS ==================== **/
-        VerticalLayout ofertasLayout = new VerticalLayout();
-        ofertasLayout.setWidthFull();
-        ofertasLayout.addClassName("offer-container");
-
-        for (CrearOferta.Oferta oferta : ofertas) {
+        /** ==================== CARRUSEL DE OFERTAS ==================== **/
+        List<Oferta> ofertas = OfertaService.getOfertas();
+        if (!ofertas.isEmpty()) {
             VerticalLayout ofertaCard = new VerticalLayout();
             ofertaCard.addClassName("offer-card");
+            ofertaCard.setWidth("80%");
 
-            Image imagenOferta = new Image("ruta/a/tu/imagen.jpg", "Imagen de la oferta");
-            imagenOferta.setWidth("100%");
-            imagenOferta.setHeight("180px");
+            Span nombreOferta = new Span();
+            Span descripcionOferta = new Span();
+            Span universidad = new Span();
+            Span ubicacion = new Span();
+            Span precioOferta = new Span();
+            Image imagenCarrusel = new Image();
+            imagenCarrusel.setWidth("100%");
+            imagenCarrusel.setHeight("180px");
 
-            Span nombreOferta = new Span(oferta.getTitulo());
-            nombreOferta.addClassName("offer-title");
-
-            Span descripcionOferta = new Span(oferta.getDescripcion());
-            descripcionOferta.addClassName("offer-description");
-
-            Span precioOferta = new Span("Precio: €" + oferta.getPrecio());
-            precioOferta.addClassName("offer-price");
-
+            Button anteriorImagen = new Button("←");
+            Button siguienteImagen = new Button("→");
             Button masInfoButton = new Button("Más Info");
             masInfoButton.addClassName("more-info-button");
 
-            ofertaCard.add(imagenOferta, nombreOferta, descripcionOferta, precioOferta, masInfoButton);
-            ofertasLayout.add(ofertaCard);
-        }
+            HorizontalLayout carruselImagenes = new HorizontalLayout(anteriorImagen, imagenCarrusel, siguienteImagen);
+            carruselImagenes.setAlignItems(Alignment.CENTER);
 
-        mainContent.add(ofertasLayout);
+            ofertaCard.add(nombreOferta, descripcionOferta, universidad, ubicacion, precioOferta, carruselImagenes, masInfoButton);
+
+            int[] ofertaActual = {0};
+            int[] imagenActual = {0};
+
+            Runnable actualizarVista = () -> {
+                Oferta oferta = ofertas.get(ofertaActual[0]);
+                nombreOferta.setText(oferta.getTitulo());
+                descripcionOferta.setText(oferta.getDescripcion());
+                universidad.setText(oferta.getUniversidad());
+                ubicacion.setText(oferta.getUbicacion());
+                precioOferta.setText("Precio: €" + oferta.getPrecio());
+
+                if (oferta.getImagenes() != null && !oferta.getImagenes().isEmpty()) {
+                    imagenCarrusel.setSrc("/uploads/" + oferta.getImagenes().get(imagenActual[0]));
+
+                } else {
+                    imagenCarrusel.setSrc("icons/piso1.jpg");
+                }
+            };
+
+            anteriorImagen.addClickListener(e -> {
+                Oferta oferta = ofertas.get(ofertaActual[0]);
+                if (imagenActual[0] > 0) {
+                    imagenActual[0]--;
+                    imagenCarrusel.setSrc("/uploads/" + oferta.getImagenes().get(imagenActual[0]));
+
+                }
+            });
+
+            siguienteImagen.addClickListener(e -> {
+                Oferta oferta = ofertas.get(ofertaActual[0]);
+                if (imagenActual[0] < oferta.getImagenes().size() - 1) {
+                    imagenActual[0]++;
+                    imagenCarrusel.setSrc("/uploads/" + oferta.getImagenes().get(imagenActual[0]));
+
+                }
+            });
+
+            Button ofertaAnterior = new Button("← Oferta");
+            Button ofertaSiguiente = new Button("Oferta →");
+            HorizontalLayout navegacionOfertas = new HorizontalLayout(ofertaAnterior, ofertaSiguiente);
+            navegacionOfertas.setJustifyContentMode(JustifyContentMode.CENTER);
+
+            ofertaAnterior.addClickListener(e -> {
+                if (ofertaActual[0] > 0) {
+                    ofertaActual[0]--;
+                    imagenActual[0] = 0;
+                    actualizarVista.run();
+                }
+            });
+
+            ofertaSiguiente.addClickListener(e -> {
+                if (ofertaActual[0] < ofertas.size() - 1) {
+                    ofertaActual[0]++;
+                    imagenActual[0] = 0;
+                    actualizarVista.run();
+                }
+            });
+
+            mainContent.add(ofertaCard, navegacionOfertas);
+            actualizarVista.run();
+        }
 
         /** ==================== FOOTER ==================== **/
         HorizontalLayout footer = new HorizontalLayout();

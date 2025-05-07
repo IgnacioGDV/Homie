@@ -1,116 +1,119 @@
-/* Contenedor principal */
+/* CONTENEDOR GENERAL */
 .register-container {
     display: flex;
-    height: 100vh; /* Ocupa toda la altura de la ventana */
-    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    font-family: 'Poppins', sans-serif;
 }
 
-/* Sección izquierda (Formulario de registro) */
+/* FORMULARIO IZQUIERDA */
 .register-left {
+    width: 55%;
+    background-color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 30px;
+    overflow-y: auto;
+}
+
+.register-form {
+    width: 100%;
+    max-width: 420px;
+     background-color: white;
+        padding: 30px;
+        border-radius: 10px;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    width: 50%;
-    background-color: white;
-    padding: 40px;
-    min-height: 100%; /* Asegura que la sección ocupe toda la altura disponible */
+    gap: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+
 }
 
-/* Logo */
 .register-logo {
-    width: 120px; /* Ajustamos el tamaño del logo */
+    width: 150px;
     margin-bottom: 10px;
 }
 
-/* Título */
 .register-title {
-    font-family: 'Poppins', sans-serif;
-    font-size: 2rem; /* Hacemos el título un poco más pequeño */
-    color: #003366;
-    font-weight: bold; /* Aseguramos que el título esté en negrita */
-    text-align: center;
-    margin-bottom: 15px; /* Ajustamos el margen inferior para que esté más cerca del formulario */
+    color: #002147;
+    text-align: left;
+    font-size: 1.8rem;
+    margin: 0;
 }
 
-/* Descripción */
-.register-left p {
+.register-form p {
     color: gray;
-    font-size: 14px;
-    text-align: center;
-    margin-bottom: 20px;
+    font-size: 0.9rem;
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
+.register-form a {
+    color: #002147; /* Azul oscuro */
+    font-weight: bold;
+    text-decoration: none;
 }
 
-/* Formulario */
-.register-form {
+.register-form a:hover {
+    text-decoration: underline;
+}
+.register-input,
+.register-checkbox {
     width: 100%;
-    max-width: 380px; /* Ajustamos el ancho máximo para que entre mejor */
-    background: white;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
 }
 
-/* Inputs */
-.register-input {
-    width: 100%;
-    padding: 8px; /* Reducimos un poco el tamaño de los inputs */
-    font-size: 0.9rem; /* Hacemos los inputs un poco más pequeños */
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-/* Botón de registro */
 .register-button {
-    width: 100%;
-    background-color: #FFA500; /* Naranja */
-    color: white;
-    padding: 12px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: background-color 0.3s ease;
+        width: 100%;
+        background-color: #002147;
+        color: white;
+        padding: 12px;
+        border: none;
+        border-radius: 5px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
 }
 
 .register-button:hover {
-    background-color: #FF7F00; /* Naranja más oscuro */
+    background-color: #004080; /* Azul más claro al hacer hover */
 }
 
-/* Sección derecha (Fondo naranja con imágenes) */
+/* SECCIÓN DERECHA */
 .register-right {
-    width: 50%;
-    background-color: #FFA500; /* Naranja */
+    width: 45%;
+    background-color: #002147;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
-    position: relative;
-    margin-bottom:0px /* Estira la sección para ocupar toda la altura disponible */
-    min-height: 100%; /* Estira la sección para ocupar toda la altura disponible */
-        height: 100vh; /* Asegura que la sección ocupe toda la altura de la pantalla */
+    padding: 30px 20px;
+    gap: 30px;
+    overflow-y: auto;
 }
 
-.register-right-img {
-    width: 80%;
-    max-width: 400px;
-    border-radius: 20px;
-    margin: 20px 0;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+.register-main-img,
+.quienes-somos-img {
+    width: 90%;
+    max-width: 420px;
+    border-radius: 16px;
+    object-fit: cover;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
 }
 
-/* Responsivo */
+/* RESPONSIVE */
 @media (max-width: 900px) {
     .register-container {
         flex-direction: column;
+        height: auto;
     }
-    .register-left, .register-right {
+
+    .register-left,
+    .register-right {
         width: 100%;
     }
-    .register-right {
-        display: none; /* Ocultar imágenes en pantallas pequeñas */
+
+    .quienes-somos-img {
+        display: none;
     }
 }
