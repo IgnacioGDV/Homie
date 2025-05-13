@@ -6,48 +6,30 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-
 @RestController
-@RequestMapping("/api/v1/usuarios")
+@RequestMapping("/api/usuarios")
 public class UsuarioController {
 
+    @Autowired
+    private UsuarioService usuarioService;
 
-    UsuarioService usuarioService;
-
-    public UsuarioController(@Autowired UsuarioService usuarioService) {
-        this.usuarioService = usuarioService;
+    @PostMapping("/crear")
+    public Usuario crear(@RequestBody Usuario usuario) {
+        return usuarioService.crearUsuario(usuario);
     }
 
-    @GetMapping
-    public ResponseEntity<ArrayList<Usuario>> getUsuarios() {
-        ArrayList<Usuario> usuarios = usuarioService.getUsuarios();
-        return usuarios != null ? ResponseEntity.ok(usuarios) : ResponseEntity.notFound().build();
+    @GetMapping("/buscar")
+    public Usuario buscarPorEmail(@RequestParam String email) {
+        return usuarioService.obtenerPorEmail(email);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Usuario> getUsuario(@PathVariable("id") String id) {
-        Usuario usuario = usuarioService.getUsuario(id);
-        return usuario != null ? ResponseEntity.ok(usuario) : ResponseEntity.notFound().build();
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestParam String email, @RequestParam String password) {
+        Usuario usuario = usuarioService.obtenerPorEmail(email);
+        if (usuario != null && password.equals(usuario.getPassword())) {
+            return ResponseEntity.ok("Login correcto. Rol: " + usuario.getRole());
+        } else {
+            return ResponseEntity.status(401).body("Credenciales incorrectas");
+        }
     }
-
-    @PostMapping
-    public ResponseEntity<Usuario> addUsuario(@RequestBody Usuario usuario) {
-        Usuario response = usuarioService.addUsuario(usuario);
-        return ResponseEntity.ok(response);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<Usuario> updateUsuario(@PathVariable("id") String id, @RequestBody Usuario usuario) {
-        Usuario response = usuarioService.updateUsuario(id, usuario);
-        return ResponseEntity.ok(response);
-    }
-
-    @GetMapping("/pdf")
-    public ResponseEntity<Boolean> createPDF() {
-        boolean response = usuarioService.createPDF();
-        return response ? ResponseEntity.ok(response) : ResponseEntity.internalServerError().build();
-    }
-
-
 }

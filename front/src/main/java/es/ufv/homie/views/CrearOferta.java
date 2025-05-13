@@ -1,27 +1,29 @@
-// CrearOferta.java (adaptado para múltiples imágenes)
 package es.ufv.homie.views;
 
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.IntegerField;
+import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import es.ufv.homie.model.Oferta;
+import es.ufv.homie.model.OfertaDTO;
 import es.ufv.homie.services.NotificationService;
 import es.ufv.homie.services.OfertaService;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,7 +32,7 @@ import java.util.List;
 @PageTitle("Crear Oferta")
 public class CrearOferta extends VerticalLayout {
 
-    public CrearOferta(NotificationService notificationService) {
+    public CrearOferta(NotificationService notificationService, OfertaService ofertaService) {
         addClassName("crear-oferta-layout");
 
         VerticalLayout formularioLayout = new VerticalLayout();
@@ -48,10 +50,12 @@ public class CrearOferta extends VerticalLayout {
         TextField tituloOferta = new TextField("Nombre de la oferta");
 
         ComboBox<String> ubicacion = new ComboBox<>("Ubicación por zona");
-        ubicacion.setItems("Alcobendas" ,"Aluche" , "Boadilla" ,"Brunete" , "Pozuelo" ,"Majadahonda","Madrid Centro","Las Tablas","Las Rozas", "Alcorcón", "Sanchinarro", "Getafe","San Sebastián De Los Reyes" , "Villaverde" , "Villaviciosa De Odón" );
+        ubicacion.setItems("Alcobendas", "Aluche", "Boadilla", "Brunete", "Pozuelo", "Majadahonda", "Madrid Centro",
+                "Las Tablas", "Las Rozas", "Alcorcón", "Sanchinarro", "Getafe", "San Sebastián De Los Reyes",
+                "Villaverde", "Villaviciosa De Odón");
 
-        ComboBox<Double> numeroInquilinos = new ComboBox<>("Número de huéspedes necesarios");
-        numeroInquilinos.setItems(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0);
+        ComboBox<Integer> numeroInquilinos = new ComboBox<>("Número de huéspedes necesarios");
+        numeroInquilinos.setItems(1, 2, 3, 4, 5, 6, 7, 8);
 
         NumberField precio = new NumberField("Importe a pagar");
         precio.setPrefixComponent(new Span("€"));
@@ -60,6 +64,16 @@ public class CrearOferta extends VerticalLayout {
         genero.setItems("Masculino", "Femenino", "Sin preferencia");
 
         TextArea descripcion = new TextArea("Descripción");
+
+        TextField universidad = new TextField("Universidad");
+        universidad.setPlaceholder("Ej. UFV");
+
+        IntegerField edadMaxima = new IntegerField("Edad máxima permitida");
+        edadMaxima.setMin(18);
+        edadMaxima.setMax(99);
+        edadMaxima.setStepButtonsVisible(true);
+
+        Checkbox piscina = new Checkbox("¿Tiene piscina?");
 
         MultiFileMemoryBuffer buffer = new MultiFileMemoryBuffer();
         Upload upload = new Upload(buffer);
@@ -72,10 +86,6 @@ public class CrearOferta extends VerticalLayout {
             String filename = event.getFileName();
             try (InputStream inputStream = buffer.getInputStream(filename)) {
                 File targetFile = new File("front/src/main/resources/META-INF/resources/uploads/" + filename);
-
-
-
-
                 targetFile.getParentFile().mkdirs();
                 try (FileOutputStream out = new FileOutputStream(targetFile)) {
                     inputStream.transferTo(out);
@@ -87,23 +97,52 @@ public class CrearOferta extends VerticalLayout {
         });
 
         Button publicarButton = new Button("Publicar", e -> {
-            Oferta nueva = new Oferta(
-                    tituloOferta.getValue(),
-                    descripcion.getValue(),
-                    "UFV",
-                    ubicacion.getValue(),
-                    precio.getValue(),
-                    nombresImagenes
-            );
-            OfertaService.addOferta(nueva);
+            OfertaDTO dto = new OfertaDTO();
+            dto.setTitle(tituloOferta.getValue());
+            dto.setLocation(ubicacion.getValue());
+            dto.setGuests(numeroInquilinos.getValue());
+            dto.setPrice(precio.getValue());
+            dto.setPreferredGender(genero.getValue());
+            dto.setDescription(descripcion.getValue());
+            dto.setUniversidad(universidad.getValue());
+            dto.setEdadmax(edadMaxima.getValue());
+            dto.setHasPool(piscina.getValue());
+            dto.setCreatedBy(1); // TODO: Reemplazar con ID del usuario autenticado
+            dto.setFotos(nombresImagenes);
+
+            Oferta oferta = mapDTOToOferta(dto);
+            ofertaService.publicarOferta(oferta);
+
             notificationService.showNotification("¡Oferta publicada con éxito!");
             getUI().ifPresent(ui -> ui.navigate("inicio"));
         });
 
         publicarButton.addClassName("publicar-button");
 
-        formularioLayout.add(logo, titulo, descripcionIntro, tituloOferta, ubicacion, numeroInquilinos, precio, genero, descripcion, upload, publicarButton);
+        formularioLayout.add(
+                logo, titulo, descripcionIntro,
+                tituloOferta, ubicacion, numeroInquilinos,
+                precio, genero, descripcion,
+                universidad, edadMaxima, piscina,
+                upload, publicarButton
+        );
 
         add(formularioLayout);
+    }
+
+    private Oferta mapDTOToOferta(OfertaDTO dto) {
+        Oferta oferta = new Oferta();
+        oferta.setTitle(dto.getTitle());
+        oferta.setDescription(dto.getDescription());
+        oferta.setUniversidad(dto.getUniversidad());
+        oferta.setLocation(dto.getLocation());
+        oferta.setPrice(dto.getPrice());
+        oferta.setFotos(dto.getFotos());
+        oferta.setGuests(dto.getGuests());
+        oferta.setPreferredGender(dto.getPreferredGender());
+        oferta.setHasPool(dto.getHasPool());
+        oferta.setCreatedBy(dto.getCreatedBy());
+        oferta.setEdadmax(dto.getEdadmax());
+        return oferta;
     }
 }

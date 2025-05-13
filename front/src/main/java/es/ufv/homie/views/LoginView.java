@@ -15,6 +15,9 @@ import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.component.html.Span;
 import es.ufv.homie.services.UsuarioService;
 
+
+
+
 @CssImport("./themes/styles/login.css")
 @Route("login")
 public class LoginView extends Div {
@@ -37,8 +40,8 @@ public class LoginView extends Div {
 
         Paragraph description = new Paragraph("La app que te facilitará el acceso a vivienda para estudiantes");
 
-        TextField username = new TextField("User name");
-        username.setPlaceholder("Introduce tu nombre de usuario");
+        TextField username = new TextField("Correo electrónico");
+        username.setPlaceholder("Introduce tu correo electrónico");
         username.addClassName("login-input");
 
         PasswordField password = new PasswordField("Contraseña");
@@ -56,9 +59,9 @@ public class LoginView extends Div {
             } else {
                 String userRole = usuarioService.getUserRole(user);
                 if ("Anfitrión".equals(userRole)) {
-                    getUI().ifPresent(ui -> ui.navigate("crear-oferta"));
+                    getUI().ifPresent(ui -> ui.navigate("crear-oferta")); // Si es Anfitrión, redirige a crear oferta
                 } else {
-                    getUI().ifPresent(ui -> ui.navigate("inicio"));
+                    getUI().ifPresent(ui -> ui.navigate("inicio")); // Si es Inquilino, redirige al inicio
                 }
             }
         });
@@ -88,3 +91,4 @@ public class LoginView extends Div {
         add(leftSection, rightSection);
     }
 }
+
