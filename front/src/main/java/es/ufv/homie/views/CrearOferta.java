@@ -71,7 +71,7 @@ public class CrearOferta extends VerticalLayout {
         upload.addSucceededListener(event -> {
             String filename = event.getFileName();
             try (InputStream inputStream = buffer.getInputStream(filename)) {
-                File targetFile = new File("uploads/" + filename);
+                File targetFile = new File("front/src/main/resources/META-INF/resources/uploads/" + filename);
 
 
 

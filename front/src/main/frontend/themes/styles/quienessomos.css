@@ -1,58 +1,123 @@
-/* Contenedor principal */
-.qs-container {
-  display: flex;
-  height: 100vh;
-  width: 100%;
+/* ==================== NAVBAR ==================== */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 80px;
+    background-color: #000F5E;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
+    z-index: 1000;
+    border-radius: 0 0 10px 10px;
 }
 
-/* Sección izquierda (texto) */
+.logo-navbar {
+    width: 70px;
+    height: auto;
+}
+
+.nav-buttons1 {
+    display: flex;
+    gap: 20px;
+}
+
+/* Botones estilo uniforme */
+.nav-buttons1 .vaadin-button,
+.explore-button1,
+.saved-button1,
+.about-button1,
+.profile-button1 {
+    background: none;
+    border: none;
+    font-size: 1.1em;
+    color: white !important;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+/* Hover naranja */
+.nav-buttons1 .vaadin-button:hover,
+.explore-button1:hover,
+.saved-button1:hover,
+.about-button1:hover,
+.profile-button1:hover {
+    background-color: #FFA500;
+    color: white !important;
+    transform: scale(1.1);
+}
+
+/* Botón activo resaltado */
+.about-button1 {
+    background-color: #004aad !important;
+    border-radius: 5px;
+}
+
+/* ==================== CONTENEDOR PRINCIPAL ==================== */
+.qs-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding-top: 100px; /* espacio debajo del navbar */
+    padding-bottom: 60px;
+    height: 100vh;
+    box-sizing: border-box;
+}
+
+/* ==================== SECCIÓN IZQUIERDA ==================== */
 .qs-left {
-  width: 50%;
-  background-color: white;
-  padding: 40px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+    flex: 1;
+    padding: 40px;
+    max-width: 600px;
 }
 
 .qs-title {
-  font-family: 'Poppins', sans-serif;
-  font-size: 2.5rem;
-  color: #003366;
-  margin-bottom: 20px;
+    font-size: 36px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #000F5E;
 }
 
 .qs-text {
-  font-size: 1rem;
-  color: #555;
-  line-height: 1.6;
+    font-size: 18px;
+    color: #333;
+    line-height: 1.6;
 }
 
-/* Sección derecha (imagen) */
+/* ==================== SECCIÓN DERECHA ==================== */
 .qs-right {
-  width: 50%;
-  background-color: #003366;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+    flex: 1;
+    padding: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .qs-image {
-  width: 80%;
-  max-width: 400px;
-  border-radius: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 500px;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    animation: fadein 1s ease-in-out;
 }
 
-/* Responsive */
-@media (max-width: 900px) {
-  .qs-container {
-    flex-direction: column;
-  }
-  .qs-right {
-    display: none; /* ocultar imagen en móviles */
-  }
-  .qs-left {
-    width: 100%;
-  }
+/* ==================== EFECTO DE TRANSICIÓN ==================== */
+@keyframes fadein {
+    from { opacity: 0; transform: scale(0.98); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media screen and (max-width: 900px) {
+    .qs-container {
+        flex-direction: column;
+        text-align: center;
+    }
+    .qs-left, .qs-right {
+        padding: 20px;
+        max-width: 90%;
+    }
 }

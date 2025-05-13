@@ -1,3 +1,17 @@
+body, html, #root {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+
+/* Fondo solo para la vista de inicio */
+.inicio-background {
+    background: url("icons/casitasblancas.png") repeat;
+    background-size: 300px auto;
+}
+
 /* ==================== NAVBAR ==================== */
 .navbar {
     width: 100%;
@@ -38,17 +52,26 @@
 .filter-menu {
     background-color: #F3F3F7;
     padding: 20px;
+    padding-top: 0;
     border-right: 1px solid #DDD;
-    height: 100vh;
     width: 250px;
     display: flex;
     flex-direction: column;
     gap: 15px;
+
+    /* Solución: ocupar toda la altura restante después del navbar */
+    height: calc(100vh - 80px);
+    box-sizing: border-box;
+    overflow-y: auto; /* Scroll si se necesita */
+    margin-top: 80px; /* hace que se alinee debajo del navbar */
 }
+
+
+
 
 .apply-filters-button {
     width: 100%;
-    background-color: #6200EA;
+    background-color: #1428a0;
     color: white;
     padding: 10px;
     border-radius: 5px;
@@ -60,14 +83,26 @@
 }
 
 /* ==================== CONTENIDO PRINCIPAL ==================== */
-.main-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    padding: 50px 0;
-}
+./* === CONTENEDOR GENERAL PARA AJUSTAR BIEN EL FOOTER === */
+ .main-layout {
+     flex: 1;
+     display: flex;
+     flex-direction: row;
+     margin-top: 80px; /* debajo del navbar */
+     min-height: 0;
+     overflow: auto;
+ }
+
+ /* === CONTENIDO PRINCIPAL === */
+ .main-content {
+     flex: 1;
+     padding: 40px 20px;
+     display: flex;
+     flex-direction: column;
+     align-items: center;
+     justify-content: flex-start;
+ }
+
 
 .logo-centered {
     width: 180px;
@@ -97,16 +132,18 @@
 }
 
 /* ==================== FOOTER ==================== */
+
+/* === FOOTER === */
 .footer {
-    width: 100%;
     height: 60px;
     background-color: #000F5E;
     color: white;
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 30px;
     border-radius: 10px 10px 0 0;
+    flex-shrink: 0;
+    margin-top: auto; /* Empuja hacia abajo si hay espacio */
 }
 
 .footer span {
@@ -150,7 +187,7 @@
     transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
 }
 
-.explore-button:hover,
+
 .saved-button:hover,
 .about-button:hover,
 .profile-button:hover {
@@ -217,7 +254,7 @@
 }
 
 /* Botón */
-.more-info-button {
+.more-info-button , .oferta-button{
     background-color: #1428a0;
     color: white;
     font-weight: 500;
@@ -226,6 +263,15 @@
     transition: background-color 0.2s ease-in-out;
 }
 
-.more-info-button:hover {
+.more-info-button:hover , .oferta-button:hover{
     background-color: #0d1e7f;
+}
+
+/* === NAVEGACIÓN DE OFERTAS === */
+.navegacion-ofertas {
+    margin-top: 20px;
+    margin-bottom: 40px;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
 }

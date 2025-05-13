@@ -119,6 +119,25 @@
     margin: 20px 0;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
+.login-right-img {
+    width: 80%;
+    max-width: 400px;
+    border-radius: 20px;
+    margin: 20px 0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 1s ease-out forwards;
+}
+
+/* Animación */
+@keyframes fadeInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
 
 /* Responsivo */
 @media (max-width: 900px) {

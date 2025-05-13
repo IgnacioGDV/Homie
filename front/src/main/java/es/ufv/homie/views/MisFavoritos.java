@@ -24,6 +24,8 @@ public class MisFavoritos extends VerticalLayout {
         setSizeFull();
         setPadding(true);
         setSpacing(true);
+        getStyle().set("margin", "0");
+       ;
         addClassName("favoritos-view"); // NUEVA CLASE RAÍZ
 
         // NAVBAR
@@ -33,17 +35,17 @@ public class MisFavoritos extends VerticalLayout {
         Image homieLogo = new Image("icons/homiepng2.png", "Logo de Homie");
         homieLogo.addClassName("favoritos-logo");
 
-        Button exploreButton = new Button("Explorar Ofertas", new Icon(VaadinIcon.SEARCH), e -> getUI().ifPresent(ui -> ui.navigate("inicio")));
-        Button savedButton = new Button("Guardados", new Icon(VaadinIcon.HEART));
-        Button aboutButton = new Button("Quienes somos", new Icon(VaadinIcon.INFO_CIRCLE), e -> getUI().ifPresent(ui -> ui.navigate("quienessomos")));
-        Button profileButton = new Button("Editar Perfil", new Icon(VaadinIcon.USER), e -> getUI().ifPresent(ui -> ui.navigate("login")));
+        Button exploreButton2 = new Button("Explorar Ofertas", new Icon(VaadinIcon.SEARCH), e -> getUI().ifPresent(ui -> ui.navigate("inicio")));
+        Button savedButton2 = new Button("Guardados", new Icon(VaadinIcon.HEART));
+        Button aboutButton2 = new Button("Quienes somos", new Icon(VaadinIcon.INFO_CIRCLE), e -> getUI().ifPresent(ui -> ui.navigate("quienessomos")));
+        Button profileButton2 = new Button("Login", new Icon(VaadinIcon.USER), e -> getUI().ifPresent(ui -> ui.navigate("login")));
 
-        exploreButton.addClassName("favoritos-explore-button");
-        savedButton.addClassName("favoritos-saved-button"); // Este será azul claro
-        aboutButton.addClassName("favoritos-about-button");
-        profileButton.addClassName("favoritos-profile-button");
+        exploreButton2.addClassName("favoritos-explore-button");
+        savedButton2.addClassName("favoritos-saved-button"); // Este será azul claro
+        aboutButton2.addClassName("favoritos-about-button");
+        profileButton2.addClassName("favoritos-profile-button");
 
-        HorizontalLayout navButtons = new HorizontalLayout(exploreButton, savedButton, aboutButton, profileButton);
+        HorizontalLayout navButtons = new HorizontalLayout(exploreButton2, savedButton2, aboutButton2, profileButton2);
         navButtons.addClassName("favoritos-nav-buttons");
 
         navBar.add(homieLogo, navButtons);

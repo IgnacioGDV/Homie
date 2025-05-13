@@ -24,13 +24,15 @@ import java.util.List;
 @Route("inicio")
 @CssImport("./themes/styles/styles.css")
 @PageTitle("Inicio")
-
 public class Inicio extends VerticalLayout {
 
     public Inicio() {
         setSizeFull();
-        setPadding(true);
-        setSpacing(true);
+        addClassName("inicio-background");
+
+        setPadding(false);
+        setSpacing(false);
+        getStyle().set("margin", "0");
 
         HorizontalLayout navBar = new HorizontalLayout();
         navBar.addClassName("navbar");
@@ -42,7 +44,7 @@ public class Inicio extends VerticalLayout {
         Button exploreButton = new Button("Explorar Ofertas", new Icon(VaadinIcon.SEARCH));
         Button savedButton = new Button("Guardados", new Icon(VaadinIcon.HEART), e -> getUI().ifPresent(ui -> ui.navigate("mis-favoritos")));
         Button aboutButton = new Button("Quienes somos", new Icon(VaadinIcon.INFO_CIRCLE), e -> getUI().ifPresent(ui -> ui.navigate("quienessomos")));
-        Button profileButton = new Button("Editar Perfil", new Icon(VaadinIcon.USER), e -> getUI().ifPresent(ui -> ui.navigate("login")));
+        Button profileButton = new Button("Login", new Icon(VaadinIcon.USER), e -> getUI().ifPresent(ui -> ui.navigate("login")));
         exploreButton.addClassName("explore-button");
         savedButton.addClassName("saved-button");
         aboutButton.addClassName("about-button");
@@ -56,7 +58,7 @@ public class Inicio extends VerticalLayout {
         VerticalLayout filterMenu = new VerticalLayout();
         filterMenu.addClassName("filter-menu");
         filterMenu.setWidth("250px");
-
+        Span filtroTitulo = new Span("Menú de Filtros");
         ComboBox<String> universityFilter = new ComboBox<>("Universidad");
         universityFilter.setItems("UFV", "UCM", "UPM", "UAM", "UC3M", "URJC");
 
@@ -88,7 +90,7 @@ public class Inicio extends VerticalLayout {
         Button applyFilters = new Button("Aplicar");
         applyFilters.addClassName("apply-filters-button");
 
-        filterMenu.add(universityFilter, locationFilter, priceLabel, priceRange, ageLabel, maxAge, genderFilter, poolFilter, applyFilters);
+        filterMenu.add(filtroTitulo,universityFilter, locationFilter, priceLabel, priceRange, ageLabel, maxAge, genderFilter, poolFilter, applyFilters);
 
         VerticalLayout mainContent = new VerticalLayout();
         mainContent.setWidthFull();
@@ -148,7 +150,7 @@ public class Inicio extends VerticalLayout {
                 precioOferta.setText("Precio: €" + oferta.getPrecio());
 
                 if (oferta.getImagenes() != null && !oferta.getImagenes().isEmpty()) {
-                    imagenCarrusel.setSrc("/uploads/" + oferta.getImagenes().get(imagenActual[0]));
+                    imagenCarrusel.setSrc("uploads/" + oferta.getImagenes().get(imagenActual[0]));
                 } else {
                     imagenCarrusel.setSrc("icons/piso1.jpg");
                 }
@@ -157,21 +159,25 @@ public class Inicio extends VerticalLayout {
             anteriorImagen.addClickListener(e -> {
                 if (imagenActual[0] > 0) {
                     imagenActual[0]--;
-                    imagenCarrusel.setSrc("/uploads/" + ofertas.get(ofertaActual[0]).getImagenes().get(imagenActual[0]));
+                    imagenCarrusel.setSrc("uploads/" + ofertas.get(ofertaActual[0]).getImagenes().get(imagenActual[0]));
                 }
             });
 
             siguienteImagen.addClickListener(e -> {
                 if (imagenActual[0] < ofertas.get(ofertaActual[0]).getImagenes().size() - 1) {
                     imagenActual[0]++;
-                    imagenCarrusel.setSrc("/uploads/" + ofertas.get(ofertaActual[0]).getImagenes().get(imagenActual[0]));
+                    imagenCarrusel.setSrc("uploads/" + ofertas.get(ofertaActual[0]).getImagenes().get(imagenActual[0]));
                 }
             });
 
             Button ofertaAnterior = new Button("← Oferta");
             Button ofertaSiguiente = new Button("Oferta →");
+            ofertaAnterior.addClassName("oferta-button");
+            ofertaSiguiente.addClassName("oferta-button");
+
             HorizontalLayout navegacionOfertas = new HorizontalLayout(ofertaAnterior, ofertaSiguiente);
             navegacionOfertas.setJustifyContentMode(JustifyContentMode.CENTER);
+            navegacionOfertas.setWidthFull();
 
             ofertaAnterior.addClickListener(e -> {
                 if (ofertaActual[0] > 0) {
@@ -203,6 +209,8 @@ public class Inicio extends VerticalLayout {
         HorizontalLayout layout = new HorizontalLayout(filterMenu, mainContent);
         layout.setSizeFull();
         layout.setFlexGrow(1, mainContent);
+        layout.addClassName("main-layout");
+        mainContent.addClassName("main-content");
 
         add(navBar, layout, footer);
     }
