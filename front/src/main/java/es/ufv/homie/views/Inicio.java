@@ -58,7 +58,7 @@ public class Inicio extends VerticalLayout {
         filterMenu.setWidth("250px");
 
         ComboBox<String> universityFilter = new ComboBox<>("Universidad");
-        universityFilter.setItems("UFV", "UCM", "UPM", "UAM", "UC3M", "URJC");
+        universityFilter.setItems("Universidad Francisco de Vitoria" ,"Universidad Rey Juan Carlos" , "Universidada Politecnica de Madrid" ,"Univeridad Autonoma de Madrid" , "Universidad Alfono X El Sabio" ,"Universidada Complutense de Madrid","Universidad Carlos III de Madrid" );
 
         ComboBox<String> locationFilter = new ComboBox<>("Ubicación");
         locationFilter.setItems("Alcobendas", "Alcorcón", "Boadilla", "Las Rozas");
@@ -108,9 +108,11 @@ public class Inicio extends VerticalLayout {
             nombreOferta.getStyle().set("font-weight", "bold").set("font-size", "20px");
 
             Span descripcionOferta = new Span();
-            Span universidad = new Span();
             Span ubicacion = new Span();
             Span precioOferta = new Span();
+            Span universityOferta = new Span();
+            Span edadMaxOferta = new Span();
+            Span piscinaOferta = new Span();
             precioOferta.getStyle().set("font-weight", "bold").set("font-size", "18px");
 
             Image imagenCarrusel = new Image();
@@ -137,15 +139,17 @@ public class Inicio extends VerticalLayout {
             HorizontalLayout carruselImagenes = new HorizontalLayout(anteriorImagen, imagenCarrusel, siguienteImagen);
             carruselImagenes.setAlignItems(Alignment.CENTER);
 
-            ofertaCard.add(nombreOferta, descripcionOferta, universidad, ubicacion, precioOferta, carruselImagenes, botones);
+            ofertaCard.add(nombreOferta, descripcionOferta, universityOferta, ubicacion, edadMaxOferta, piscinaOferta, precioOferta, carruselImagenes, botones);
 
             Runnable actualizarVista = () -> {
                 Oferta oferta = ofertas.get(ofertaActual[0]);
                 nombreOferta.setText(oferta.getTitulo());
                 descripcionOferta.setText(oferta.getDescripcion());
-                universidad.setText(oferta.getUniversidad());
                 ubicacion.setText(oferta.getUbicacion());
                 precioOferta.setText("Precio: €" + oferta.getPrecio());
+                universityOferta.setText(oferta.getUniversity());
+                edadMaxOferta.setText(oferta.getEdadMax());
+                piscinaOferta.setText(oferta.getPiscina());
 
                 if (oferta.getImagenes() != null && !oferta.getImagenes().isEmpty()) {
                     imagenCarrusel.setSrc("/uploads/" + oferta.getImagenes().get(imagenActual[0]));

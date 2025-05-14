@@ -2,28 +2,35 @@
 package es.ufv.homie.model;
 
 import java.util.List;
+import java.util.Locale;
 
 public class Oferta {
     private String titulo;
     private String descripcion;
-    private String universidad;
     private String ubicacion;
     private double precio;
+    private String university;
+    private String edadMax;
+    private String piscina;
     private List<String> imagenes;
 
-    public Oferta(String titulo, String descripcion, String universidad, String ubicacion, double precio, List<String> imagenes) {
+    public Oferta(String titulo, String descripcion, String ubicacion, double precio, String university, String edadMax, String piscina,List<String> imagenes) {
         this.titulo = titulo;
         this.descripcion = descripcion;
-        this.universidad = universidad;
         this.ubicacion = ubicacion;
         this.precio = precio;
+        this.university = university;
+        this.edadMax = edadMax;
+        this.piscina = piscina;
         this.imagenes = imagenes;
     }
 
     public String getTitulo() { return titulo; }
     public String getDescripcion() { return descripcion; }
-    public String getUniversidad() { return universidad; }
     public String getUbicacion() { return ubicacion; }
     public double getPrecio() { return precio; }
+    public String getUniversity() { return university; }
+    public String getEdadMax() { return edadMax; }
+    public String getPiscina() { return piscina; }
     public List<String> getImagenes() { return imagenes; }
 }

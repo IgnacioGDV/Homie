@@ -66,7 +66,7 @@ public class MisFavoritos extends VerticalLayout {
                 Span precio = new Span("Precio: €" + oferta.getPrecio());
                 precio.getStyle().set("font-weight", "bold").set("font-size", "18px");
 
-                Span universidad = new Span(oferta.getUniversidad());
+                Span universidad = new Span(oferta.getUniversity());
                 Span ubicacion = new Span(oferta.getUbicacion());
                 Span descripcion = new Span(oferta.getDescripcion());
 

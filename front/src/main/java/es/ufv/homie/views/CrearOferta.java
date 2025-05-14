@@ -7,6 +7,7 @@ import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.textfield.NumberField;
@@ -59,6 +60,15 @@ public class CrearOferta extends VerticalLayout {
         ComboBox<String> genero = new ComboBox<>("Género con el que prefiere convivir");
         genero.setItems("Masculino", "Femenino", "Sin preferencia");
 
+        ComboBox<String> university = new ComboBox<>("Universidad");
+        university.setItems("Universidad Francisco de Vitoria" ,"Universidad Rey Juan Carlos" , "Universidada Politecnica de Madrid" ,"Univeridad Autonoma de Madrid" , "Universidad Alfono X El Sabio" ,"Universidada Complutense de Madrid","Universidad Carlos III de Madrid" );
+
+        TextField edadMax = new TextField("Edad Máxima");
+        edadMax.setPlaceholder("Introduce la edad máxima");
+
+        RadioButtonGroup<String> piscina = new RadioButtonGroup<>();
+        piscina.setItems("Piscina: Sí", "Piscina: No");
+
         TextArea descripcion = new TextArea("Descripción");
 
         MultiFileMemoryBuffer buffer = new MultiFileMemoryBuffer();
@@ -90,9 +100,11 @@ public class CrearOferta extends VerticalLayout {
             Oferta nueva = new Oferta(
                     tituloOferta.getValue(),
                     descripcion.getValue(),
-                    "UFV",
                     ubicacion.getValue(),
-                    precio.getValue(),
+                    precio.getValue() != null ? precio.getValue() : 0.0,
+                    university.getValue(),
+                    edadMax.getValue(),
+                    piscina.getValue(),
                     nombresImagenes
             );
             OfertaService.addOferta(nueva);
@@ -102,7 +114,7 @@ public class CrearOferta extends VerticalLayout {
 
         publicarButton.addClassName("publicar-button");
 
-        formularioLayout.add(logo, titulo, descripcionIntro, tituloOferta, ubicacion, numeroInquilinos, precio, genero, descripcion, upload, publicarButton);
+        formularioLayout.add(logo, titulo, descripcionIntro, tituloOferta, ubicacion, numeroInquilinos, precio, genero, university, edadMax, piscina, descripcion, upload, publicarButton);
 
         add(formularioLayout);
     }
