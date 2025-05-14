@@ -1,3 +1,4 @@
+/* ====== REGLAS BÁSICAS ====== */
 body, html, #root {
     height: 100%;
     margin: 0;
@@ -5,18 +6,17 @@ body, html, #root {
     flex-direction: column;
 }
 
-
-/* Fondo solo para la vista de inicio */
+/* Fondo para vista de inicio */
 .inicio-background {
     background: url("icons/casitasblancas.png") repeat;
     background-size: 300px auto;
 }
 
-/* ==================== NAVBAR ==================== */
+/* ====== NAVBAR ====== */
 .navbar {
     width: 100%;
     height: 80px;
-    background-color: #000F5E; /* Azul oscuro */
+    background-color: #000F5E;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -48,7 +48,17 @@ body, html, #root {
     border-radius: 5px;
 }
 
-/* ==================== MENÚ DE FILTROS ==================== */
+/* ====== LAYOUT PRINCIPAL (menu + contenido) ====== */
+.main-layout {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    margin-top: 80px; /* debajo del navbar */
+    min-height: calc(100vh - 80px - 60px); /* navbar + footer */
+    overflow: hidden;
+}
+
+/* ====== MENÚ DE FILTROS ====== */
 .filter-menu {
     background-color: #F3F3F7;
     padding: 20px;
@@ -58,82 +68,46 @@ body, html, #root {
     display: flex;
     flex-direction: column;
     gap: 15px;
-
-    /* Solución: ocupar toda la altura restante después del navbar */
-    height: calc(100vh - 80px);
+    height: 100%;
+    overflow-y: auto;
     box-sizing: border-box;
-    overflow-y: auto; /* Scroll si se necesita */
-    margin-top: 80px; /* hace que se alinee debajo del navbar */
 }
 
-
-
-
 .apply-filters-button {
+    margin-top: auto;
     width: 100%;
-    background-color: #1428a0;
+    background-color: #000F5E;
     color: white;
     padding: 10px;
     border-radius: 5px;
     cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s ease;
 }
 
 .apply-filters-button:hover {
-    background-color: #3700B3;
+    background-color: #1428a0;
 }
 
-/* ==================== CONTENIDO PRINCIPAL ==================== */
-./* === CONTENEDOR GENERAL PARA AJUSTAR BIEN EL FOOTER === */
- .main-layout {
-     flex: 1;
-     display: flex;
-     flex-direction: row;
-     margin-top: 80px; /* debajo del navbar */
-     min-height: 0;
-     overflow: auto;
- }
-
- /* === CONTENIDO PRINCIPAL === */
- .main-content {
-     flex: 1;
-     padding: 40px 20px;
-     display: flex;
-     flex-direction: column;
-     align-items: center;
-     justify-content: flex-start;
- }
-
+/* ====== CONTENIDO PRINCIPAL ====== */
+.main-content {
+    flex: 1;
+    padding: 40px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    height: 100%;
+    overflow-y: auto;
+    box-sizing: border-box;
+}
 
 .logo-centered {
     width: 180px;
     height: auto;
 }
 
-.search-bar {
-    display: flex;
-    align-items: center;
-    background-color: #EAE2F8;
-    padding: 8px;
-    border-radius: 20px;
-    width: 50%;
-}
-
-.search-field {
-    border: none;
-    background: none;
-    outline: none;
-    flex-grow: 1;
-}
-
-.search-button {
-    background: none;
-    border: none;
-    cursor: pointer;
-}
-
-/* ==================== FOOTER ==================== */
-
-/* === FOOTER === */
+/* ====== FOOTER ====== */
 .footer {
     height: 60px;
     background-color: #000F5E;
@@ -143,7 +117,6 @@ body, html, #root {
     align-items: center;
     border-radius: 10px 10px 0 0;
     flex-shrink: 0;
-    margin-top: auto; /* Empuja hacia abajo si hay espacio */
 }
 
 .footer span {
@@ -156,26 +129,14 @@ body, html, #root {
     color: #FFA500;
 }
 
-
-.social-icons .vaadin-icon {
-    font-size: 20px;
-    color: white;
-    cursor: pointer;
-}
-
-.social-icons .vaadin-icon:hover {
-    color: #7F56D9;
-}
-
-.explore-button
-{
+/* ====== BOTONES DE NAVBAR ====== */
+.explore-button {
     background-color: #004aad;
     color: white !important;
     border: none;
     font-size: 1.1em;
     transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
 }
-
 
 .saved-button,
 .about-button,
@@ -187,7 +148,6 @@ body, html, #root {
     transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
 }
 
-
 .saved-button:hover,
 .about-button:hover,
 .profile-button:hover {
@@ -196,22 +156,13 @@ body, html, #root {
     transform: scale(1.1);
 }
 
-/* Layout general de las ofertas */
-.offer-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 24px;
-    padding: 24px 12px;
-}
-
-/* Tarjeta individual */
+/* ====== TARJETA DE OFERTA ====== */
 .offer-card {
     background-color: white;
     border-radius: 12px;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
     padding: 16px;
-    width: 300px;
+    width: 320px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -222,15 +173,14 @@ body, html, #root {
     transform: scale(1.02);
 }
 
-/* Imagen */
-.offer-card vaadin-image {
+.offer-card vaadin-image,
+.imagen-oferta {
     border-radius: 8px;
     object-fit: cover;
     height: 180px;
     width: 100%;
 }
 
-/* Título */
 .offer-title {
     font-size: 1.2rem;
     font-weight: bold;
@@ -238,7 +188,6 @@ body, html, #root {
     margin-top: 10px;
 }
 
-/* Descripción */
 .offer-description {
     font-size: 0.95rem;
     color: #333;
@@ -246,15 +195,15 @@ body, html, #root {
     margin: 8px 0;
 }
 
-/* Precio */
 .offer-price {
     font-weight: 600;
     color: #000;
     margin-bottom: 12px;
 }
 
-/* Botón */
-.more-info-button , .oferta-button{
+/* ====== BOTONES ====== */
+.more-info-button,
+.oferta-button {
     background-color: #1428a0;
     color: white;
     font-weight: 500;
@@ -263,11 +212,11 @@ body, html, #root {
     transition: background-color 0.2s ease-in-out;
 }
 
-.more-info-button:hover , .oferta-button:hover{
+.more-info-button:hover,
+.oferta-button:hover {
     background-color: #0d1e7f;
 }
 
-/* === NAVEGACIÓN DE OFERTAS === */
 .navegacion-ofertas {
     margin-top: 20px;
     margin-bottom: 40px;

@@ -44,33 +44,48 @@ public class Inicio extends VerticalLayout {
         homieLogo.addClassName("logo-navbar");
 
         Button exploreButton = new Button("Explorar Ofertas", new Icon(VaadinIcon.SEARCH));
-        Button savedButton = new Button("Guardados", new Icon(VaadinIcon.HEART), e -> getUI().ifPresent(ui -> ui.navigate("mis-favoritos")));
-        Button aboutButton = new Button("Quienes somos", new Icon(VaadinIcon.INFO_CIRCLE), e -> getUI().ifPresent(ui -> ui.navigate("quienessomos")));
-        Button profileButton = new Button("Login", new Icon(VaadinIcon.USER), e -> getUI().ifPresent(ui -> ui.navigate("login")));
+        exploreButton.addClassName("explore-button");
 
-        navBar.add(homieLogo, new HorizontalLayout(exploreButton, savedButton, aboutButton, profileButton));
+        Button savedButton = new Button("Guardados", new Icon(VaadinIcon.HEART), e -> getUI().ifPresent(ui -> ui.navigate("mis-favoritos")));
+        savedButton.addClassName("saved-button");
+
+        Button aboutButton = new Button("Quienes somos", new Icon(VaadinIcon.INFO_CIRCLE), e -> getUI().ifPresent(ui -> ui.navigate("quienessomos")));
+        aboutButton.addClassName("about-button");
+
+        Button profileButton = new Button("Login", new Icon(VaadinIcon.USER), e -> getUI().ifPresent(ui -> ui.navigate("login")));
+        profileButton.addClassName("profile-button");
+
+        HorizontalLayout navButtons = new HorizontalLayout(exploreButton, savedButton, aboutButton, profileButton);
+        navButtons.addClassName("nav-buttons");
+
+        navBar.add(homieLogo, navButtons);
 
         VerticalLayout filterMenu = new VerticalLayout();
         filterMenu.addClassName("filter-menu");
         filterMenu.setWidth("250px");
 
         filterMenu.add(
-                new Span("Menú de Filtros"),
+                new Span("Universidad"),
                 new ComboBox<>("Universidad", "UFV", "UCM", "UPM", "UAM", "UC3M", "URJC"),
+                new Span("Ubicación"),
                 new ComboBox<>("Ubicación", "Alcobendas", "Alcorcón", "Boadilla", "Las Rozas"),
                 new Span("Rango de precio (€)"),
                 new HorizontalLayout(new NumberField("Min."), new NumberField("Max.")),
                 new Span("Edad máxima"),
-                new NumberField(),
+                new NumberField("Edad..."),
                 new RadioButtonGroup<>("Género", "Masculino", "Femenino"),
                 new RadioButtonGroup<>("Piscina", "Sí", "No"),
                 new Button("Aplicar")
         );
 
         VerticalLayout mainContent = new VerticalLayout();
+        mainContent.addClassName("main-content");
         mainContent.setWidthFull();
         mainContent.setAlignItems(FlexComponent.Alignment.CENTER);
-        mainContent.add(new Image("icons/homiepng.png", "Logo de Homie"));
+
+        Image logoCentral = new Image("icons/homiepng.png", "Logo de Homie");
+        logoCentral.addClassName("logo-centered");
+        mainContent.add(logoCentral);
 
         List<OfertaF> ofertaFS = obtenerOfertasDesdeBackend();
 
@@ -92,20 +107,20 @@ public class Inicio extends VerticalLayout {
             precioOferta.getStyle().set("font-weight", "bold").set("font-size", "18px");
 
             Image imagenCarrusel = new Image();
-            imagenCarrusel.setWidth("100%");
-            imagenCarrusel.setHeight("180px");
+            imagenCarrusel.addClassName("imagen-oferta");
 
-            Button anteriorImagen = new Button("←");
-            Button siguienteImagen = new Button("→");
+            Button anteriorImagen = new Button("\u2190");
+            Button siguienteImagen = new Button("\u2192");
 
             Button guardarButton = new Button(new Icon(VaadinIcon.HEART));
+            guardarButton.addClassName("more-info-button");
             guardarButton.addClickListener(e -> {
                 ofertaService.addFavorito(ofertaFS.get(ofertaActual[0]));
-                Notification.show("¡Añadido a favoritos!");
+                Notification.show("\u00a1A\u00f1adido a favoritos!");
             });
 
-
             Button masInfoButton = new Button("Más Info");
+            masInfoButton.addClassName("more-info-button");
 
             HorizontalLayout botones = new HorizontalLayout(masInfoButton, guardarButton);
             HorizontalLayout carruselImagenes = new HorizontalLayout(anteriorImagen, imagenCarrusel, siguienteImagen);
@@ -114,11 +129,13 @@ public class Inicio extends VerticalLayout {
             ofertaCard.add(nombreOferta, descripcionOferta, universidad, ubicacion, precioOferta, carruselImagenes, botones);
             mainContent.add(ofertaCard);
 
-            Button ofertaAnterior = new Button("← Oferta");
-            Button ofertaSiguiente = new Button("Oferta →");
+            Button ofertaAnterior = new Button("\u2190 Oferta");
+            Button ofertaSiguiente = new Button("Oferta \u2192");
+            ofertaAnterior.addClassName("oferta-button");
+            ofertaSiguiente.addClassName("oferta-button");
+
             HorizontalLayout navegacionOfertas = new HorizontalLayout(ofertaAnterior, ofertaSiguiente);
-            navegacionOfertas.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
-            navegacionOfertas.setWidthFull();
+            navegacionOfertas.addClassName("navegacion-ofertas");
 
             ofertaAnterior.addClickListener(e -> {
                 if (ofertaActual[0] > 0) {
@@ -154,7 +171,7 @@ public class Inicio extends VerticalLayout {
             actualizarVista(ofertaFS.get(0), nombreOferta, descripcionOferta, universidad, ubicacion, precioOferta, imagenCarrusel, imagenActual);
         }
 
-        HorizontalLayout footer = new HorizontalLayout(new Span("© 2024 Homie. Todos los derechos reservados."));
+        HorizontalLayout footer = new HorizontalLayout(new Span("\u00a9 2024 Homie. Todos los derechos reservados."));
         footer.addClassName("footer");
         footer.setWidthFull();
 
@@ -172,7 +189,7 @@ public class Inicio extends VerticalLayout {
             if (response != null) {
                 List<OfertaF> lista = List.of(response);
                 for (OfertaF o : lista) {
-                    if (o.getFotos() == null) o.setFotos(new ArrayList<>()); // evitar null
+                    if (o.getFotos() == null) o.setFotos(new ArrayList<>());
                 }
                 return lista;
             }
