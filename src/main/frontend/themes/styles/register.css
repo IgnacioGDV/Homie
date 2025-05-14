@@ -1,0 +1,119 @@
+/* CONTENEDOR GENERAL */
+.register-container {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* FORMULARIO IZQUIERDA */
+.register-left {
+    width: 55%;
+    background-color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 30px;
+    overflow-y: auto;
+}
+
+.register-form {
+    width: 100%;
+    max-width: 420px;
+     background-color: white;
+        padding: 30px;
+        border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+
+}
+
+.register-logo {
+    width: 150px;
+    margin-bottom: 10px;
+}
+
+.register-title {
+    color: #002147;
+    text-align: left;
+    font-size: 1.8rem;
+    margin: 0;
+}
+
+.register-form p {
+    color: gray;
+    font-size: 0.9rem;
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
+.register-form a {
+    color: #002147; /* Azul oscuro */
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.register-form a:hover {
+    text-decoration: underline;
+}
+.register-input,
+.register-checkbox {
+    width: 100%;
+}
+
+.register-button {
+        width: 100%;
+        background-color: #002147;
+        color: white;
+        padding: 12px;
+        border: none;
+        border-radius: 5px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+}
+
+.register-button:hover {
+    background-color: #004080; /* Azul más claro al hacer hover */
+}
+
+/* SECCIÓN DERECHA */
+.register-right {
+    width: 45%;
+    background-color: #002147;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 30px 20px;
+    gap: 30px;
+    overflow-y: auto;
+}
+
+.register-main-img,
+.quienes-somos-img {
+    width: 90%;
+    max-width: 420px;
+    border-radius: 16px;
+    object-fit: cover;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+    .register-container {
+        flex-direction: column;
+        height: auto;
+    }
+
+    .register-left,
+    .register-right {
+        width: 100%;
+    }
+
+    .quienes-somos-img {
+        display: none;
+    }
+}

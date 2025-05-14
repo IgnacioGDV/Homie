@@ -1,0 +1,11 @@
+{
+  "lumoImports" : [ "typography", "color", "spacing", "badge", "utility" ],
+  "assets": {
+    "css": [
+      "styles/crearoferta.css",
+      "styles/styles.css",
+      "styles/login.css",
+      "styles/register.css"
+    ]
+  }
+}

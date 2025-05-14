@@ -1,0 +1,17 @@
+{
+  "frontendFolder": "C:/Users/OWASP/IdeaProjects/Homie/./src/main/frontend",
+  "themeFolder": "themes",
+  "themeResourceFolder": "C:/Users/OWASP/IdeaProjects/Homie/./src/main/frontend/generated/jar-resources",
+  "staticOutput": "C:/Users/OWASP/IdeaProjects/Homie/target/classes/META-INF/VAADIN/webapp/VAADIN/static",
+  "generatedFolder": "generated",
+  "statsOutput": "C:\\Users\\OWASP\\IdeaProjects\\Homie\\target\\classes\\META-INF\\VAADIN\\config",
+  "frontendBundleOutput": "C:\\Users\\OWASP\\IdeaProjects\\Homie\\target\\classes\\META-INF\\VAADIN\\webapp",
+  "devBundleOutput": "C:/Users/OWASP/IdeaProjects/Homie/target/dev-bundle/webapp",
+  "devBundleStatsOutput": "C:/Users/OWASP/IdeaProjects/Homie/target/dev-bundle/config",
+  "jarResourcesFolder": "C:/Users/OWASP/IdeaProjects/Homie/./src/main/frontend/generated/jar-resources",
+  "themeName": "",
+  "clientServiceWorkerSource": "C:\\Users\\OWASP\\IdeaProjects\\Homie\\target\\sw.ts",
+  "pwaEnabled": false,
+  "offlineEnabled": false,
+  "offlinePath": "'offline.html'"
+}
