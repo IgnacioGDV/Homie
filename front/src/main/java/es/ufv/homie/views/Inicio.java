@@ -64,7 +64,7 @@ public class Inicio extends VerticalLayout {
         Button exploreButton = new Button("Explorar Ofertas", new Icon(VaadinIcon.SEARCH));
         Button savedButton = new Button("Guardados", new Icon(VaadinIcon.HEART), e -> getUI().ifPresent(ui -> ui.navigate("mis-favoritos")));
         Button aboutButton = new Button("Quienes somos", new Icon(VaadinIcon.INFO_CIRCLE), e -> getUI().ifPresent(ui -> ui.navigate("quienessomos")));
-        Button profileButton = new Button("Login", new Icon(VaadinIcon.USER), e -> getUI().ifPresent(ui -> ui.navigate("login")));
+        Button profileButton = new Button("Logout", new Icon(VaadinIcon.USER), e -> getUI().ifPresent(ui -> ui.navigate("login")));
 
         exploreButton.addClassName("explore-button");
         savedButton.addClassName("saved-button");

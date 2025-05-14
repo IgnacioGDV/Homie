@@ -24,6 +24,7 @@ public class QuienesSomos extends VerticalLayout {
 
     private int currentImage = 0;
     private final List<String> images = Arrays.asList(
+            "icons/HomieGrupo.png",
             "icons/equipo1.jpg",
             "icons/equipo2.jpg",
             "icons/equipo3.jpg"
@@ -45,7 +46,7 @@ public class QuienesSomos extends VerticalLayout {
         Button exploreButton1 = new Button("Explorar Ofertas", new Icon(VaadinIcon.SEARCH), e -> UI.getCurrent().navigate("inicio"));
         Button savedButton1 = new Button("Guardados", new Icon(VaadinIcon.HEART), e -> UI.getCurrent().navigate("mis-favoritos"));
         Button aboutButton1 = new Button("Quienes somos", new Icon(VaadinIcon.INFO_CIRCLE));
-        Button profileButton1= new Button("Login", new Icon(VaadinIcon.USER), e -> UI.getCurrent().navigate("login"));
+        Button profileButton1= new Button("Logout", new Icon(VaadinIcon.USER), e -> UI.getCurrent().navigate("login"));
 
         exploreButton1.addClassName("explore-button1");
         savedButton1.addClassName("saved-button1");
@@ -71,7 +72,16 @@ public class QuienesSomos extends VerticalLayout {
         Paragraph description = new Paragraph("Somos Homie, una plataforma hecha por estudiantes para estudiantes. \n\nEnlazamos a inquilinos y anfitriones con total confianza y facilidad. Nacida en la Universidad Francisco de Vitoria en el proyecto final de 'Proyectos II', nuestra misión es ayudarte a encontrar tu hogar universitario ideal.");
         description.addClassName("qs-text");
 
-        leftSection.add(title, description);
+        H1 title2 = new H1("\nContacto");
+        title2.addClassName("qs-title");
+
+        Paragraph description1 = new Paragraph("homieufv@gmail.com");
+        description1.addClassName("qs-text");
+
+
+        leftSection.add(title, description, title2, description1);
+
+
 
         /** Sección derecha con carrusel **/
         VerticalLayout rightSection = new VerticalLayout();

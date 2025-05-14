@@ -71,6 +71,14 @@
     flex: 1;
     padding: 40px;
     max-width: 600px;
+    background-color: #ffffffcc; /* Blanco con algo de transparencia */
+    backdrop-filter: blur(6px);
+    border-radius: 15px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+}
+.qs-left:hover {
+    transform: translateY(-5px);
 }
 
 .qs-title {
@@ -97,11 +105,17 @@
 
 .qs-image {
     width: 100%;
-    max-width: 500px;
+    max-width: 600px;
     height: auto;
     border-radius: 10px;
     box-shadow: 0 4px 16px rgba(0,0,0,0.1);
     animation: fadein 1s ease-in-out;
+}
+
+.qs-image:hover {
+    transform: scale(1.03);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 /* ==================== EFECTO DE TRANSICIÓN ==================== */
@@ -120,4 +134,8 @@
         padding: 20px;
         max-width: 90%;
     }
+}
+body {
+    background: linear-gradient(to bottom right, #f2f6ff, #e6ecff);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }

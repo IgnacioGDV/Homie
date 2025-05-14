@@ -38,7 +38,7 @@ public class MisFavoritos extends VerticalLayout {
         Button exploreButton2 = new Button("Explorar Ofertas", new Icon(VaadinIcon.SEARCH), e -> getUI().ifPresent(ui -> ui.navigate("inicio")));
         Button savedButton2 = new Button("Guardados", new Icon(VaadinIcon.HEART));
         Button aboutButton2 = new Button("Quienes somos", new Icon(VaadinIcon.INFO_CIRCLE), e -> getUI().ifPresent(ui -> ui.navigate("quienessomos")));
-        Button profileButton2 = new Button("Login", new Icon(VaadinIcon.USER), e -> getUI().ifPresent(ui -> ui.navigate("login")));
+        Button profileButton2 = new Button("Logout", new Icon(VaadinIcon.USER), e -> getUI().ifPresent(ui -> ui.navigate("login")));
 
         exploreButton2.addClassName("favoritos-explore-button");
         savedButton2.addClassName("favoritos-saved-button"); // Este será azul claro
