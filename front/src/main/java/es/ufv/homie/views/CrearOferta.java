@@ -104,6 +104,7 @@ public class CrearOferta extends VerticalLayout {
                     precio.getValue() != null ? precio.getValue() : 0.0,
                     university.getValue(),
                     edadMax.getValue(),
+                    genero.getValue(),
                     piscina.getValue(),
                     nombresImagenes
             );

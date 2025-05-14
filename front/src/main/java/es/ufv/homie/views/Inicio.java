@@ -158,6 +158,29 @@ public class Inicio extends VerticalLayout {
                 }
             };
 
+            // Listener para aplicar filtros
+            applyFilters.addClickListener(e -> {
+                List<Oferta> filtradas = OfertaService.getOfertas().stream()
+                        .filter(o -> universityFilter.isEmpty() ||
+                                o.getUniversity().equals(universityFilter.getValue()))
+                        .filter(o -> locationFilter.isEmpty() ||
+                                o.getUbicacion().equals(locationFilter.getValue()))
+                        .filter(o -> o.getPrecio() >= minPrice.getValue() &&
+                                o.getPrecio() <= maxPrice.getValue())
+                        .filter(o -> maxAge.isEmpty() ||
+                                o.getEdadMax() <= maxAge.getValue())
+                        .filter(o -> genderFilter.isEmpty() ||
+                                o.getGenero().equals(genderFilter.getValue()))
+                        .filter(o -> poolFilter.isEmpty() ||
+                                (o.isPiscina() && poolFilter.getValue().equals("Sí")) ||
+                                (!o.isPiscina() && poolFilter.getValue().equals("No")))
+                        .collect(Collectors.toList());
+                ofertasRef.set(filtradas);
+                ofertaActual[0] = 0;
+                imagenActual[0] = 0;
+                actualizarVista.run();
+            });
+
             anteriorImagen.addClickListener(e -> {
                 if (imagenActual[0] > 0) {
                     imagenActual[0]--;
