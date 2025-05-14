@@ -4,7 +4,9 @@ FROM eclipse-temurin:17-jdk AS builder
 WORKDIR /app
 COPY . .
 RUN chmod +x mvnw
-RUN ./mvnw clean package -DskipTests
+
+# Usa el perfil 'production' para que Vaadin genere el bundle en build-time
+RUN ./mvnw clean package -DskipTests -Pproduction
 
 # Stage 2: Run the application
 FROM eclipse-temurin:17-jre
