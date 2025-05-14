@@ -2,7 +2,7 @@ package es.ufv.homie.model;
 
 public class PhotoFront {
     private String url;
-    private String data; // <-- Base64
+    private String data; // Base64
 
     public PhotoFront() {}
 

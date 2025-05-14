@@ -1,6 +1,8 @@
 package es.ufv.homie.services;
 
+import es.ufv.homie.model.OfertaDTOFront;
 import es.ufv.homie.model.OfertaF;
+import es.ufv.homie.model.PhotoFront;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -16,12 +18,24 @@ public class OfertaService {
 
     private final List<OfertaF> favoritos = new ArrayList<>();
 
-    public void publicarOferta(OfertaF ofertaF) {
+    public void publicarOferta(OfertaF ofertaF, List<PhotoFront> fotos) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<OfertaF> request = new HttpEntity<>(ofertaF, headers);
-        restTemplate.postForEntity(backendUrl + "/crear", request, OfertaF.class);
+
+        OfertaDTOFront dto = new OfertaDTOFront();
+        dto.setOferta(ofertaF);
+        dto.setFotos(fotos);
+
+        HttpEntity<OfertaDTOFront> request = new HttpEntity<>(dto, headers);
+
+        try {
+            restTemplate.postForEntity(backendUrl + "/crear", request, Void.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error al enviar la oferta al backend: " + e.getMessage());
+        }
     }
+
 
     public List<OfertaF> obtenerOfertasDesdeBackend() {
         try {

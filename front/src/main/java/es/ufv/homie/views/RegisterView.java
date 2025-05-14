@@ -12,7 +12,9 @@ import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouterLink;
+import es.ufv.homie.model.Usuario;
 import es.ufv.homie.services.UsuarioService;
+import org.springframework.web.client.RestTemplate;
 
 
 @CssImport("./themes/styles/register.css")
@@ -72,28 +74,38 @@ public class RegisterView extends Div {
                 Notification.show("Por favor, complete todos los campos correctamente.");
                 return;
             }
+
             if (!password.getValue().equals(confirmPassword.getValue())) {
                 Notification.show("Las contraseñas no coinciden");
                 return;
             }
+
             if (!usuarioService.isValidPassword(password.getValue())) {
                 Notification.show(
-                        "La contraseña debe contener al menos 1 mayúscula, " +
-                                "un mínimo de 2 letras y al menos 8 caracteres"
+                        "La contraseña debe contener al menos 1 mayúscula, un mínimo de 2 letras y al menos 8 caracteres"
                 );
                 return;
             }
 
-            usuarioService.registerUser(
-                    email.getValue(),
-                    password.getValue(),
-                    phone.getValue(),
-                    birthDate.getValue().toString(),
-                    userType.getValue()
-            );
-            Notification.show("Usuario registrado exitosamente");
-            getUI().ifPresent(ui -> ui.navigate("login"));
+            try {
+                usuarioService.registerUser(
+                        email.getValue(),
+                        password.getValue(),
+                        phone.getValue(),
+                        birthDate.getValue().toString(),
+                        userType.getValue()
+                );
+                Notification.show("Usuario registrado exitosamente");
+                getUI().ifPresent(ui -> ui.navigate("login"));
+            } catch (Exception ex) {
+                if (ex.getMessage().contains("409")) {
+                    Notification.show("Este correo ya está registrado. Intenta con otro.");
+                } else {
+                    Notification.show("Error al registrar: " + ex.getMessage());
+                }
+            }
         });
+
         registerButton.addClassName("register-button");
         RouterLink loginLink = new RouterLink("¿Ya tienes cuenta? Inicia sesión aquí", LoginView.class);
         Span loginText = new Span("Si ya eres miembro ");

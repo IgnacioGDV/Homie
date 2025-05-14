@@ -1,5 +1,6 @@
 package es.ufv.homie.views;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -15,14 +16,17 @@ import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import es.ufv.homie.model.OfertaF;
-import es.ufv.homie.model.OfertaDTOF;
+import es.ufv.homie.model.*;
 import es.ufv.homie.services.NotificationService;
 import es.ufv.homie.services.OfertaService;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,7 +44,7 @@ public class CrearOferta extends VerticalLayout {
         Image logo = new Image("icons/homiepng.png", "Homie Logo");
         logo.addClassName("logo-homie");
 
-        Span titulo = new Span("¡Bienvenido, Anfitrión!");
+        Span titulo = new Span("\u00a1Bienvenido, Anfitrión!");
         titulo.getStyle().set("font-size", "24px").set("color", "#002147").set("font-weight", "bold");
 
         Span descripcionIntro = new Span("Crea tu oferta para que los inquilinos de Homie puedan aplicar a ella.");
@@ -96,24 +100,50 @@ public class CrearOferta extends VerticalLayout {
         });
 
         Button publicarButton = new Button("Publicar", e -> {
-            OfertaDTOF dto = new OfertaDTOF();
-            dto.setTitle(tituloOferta.getValue());
-            dto.setLocation(ubicacion.getValue());
-            dto.setGuests(numeroInquilinos.getValue());
-            dto.setPrice(precio.getValue());
-            dto.setPreferredGender(genero.getValue());
-            dto.setDescription(descripcion.getValue());
-            dto.setUniversidad(universidad.getValue());
-            dto.setEdadmax(edadMaxima.getValue());
-            dto.setHasPool(piscina.getValue());
-            dto.setCreatedBy(1); // TODO: Reemplazar con ID del usuario autenticado
-            dto.setFotos(nombresImagenes);
+            OfertaF oferta = new OfertaF();
+            oferta.setTitle(tituloOferta.getValue());
+            oferta.setLocation(ubicacion.getValue());
+            oferta.setGuests(numeroInquilinos.getValue());
+            oferta.setPrice(precio.getValue());
+            oferta.setPreferredGender(genero.getValue());
+            oferta.setDescription(descripcion.getValue());
+            oferta.setUniversidad(universidad.getValue());
+            oferta.setEdadmax(edadMaxima.getValue());
+            oferta.setHasPool(piscina.getValue());
+            oferta.setCreatedBy(1); // Cambiar por ID del usuario logueado
 
-            OfertaF ofertaF = mapDTOToOferta(dto);
-            ofertaService.publicarOferta(ofertaF);
+            List<PhotoFront> fotos = nombresImagenes.stream().map(nombre -> new PhotoFront(nombre, "")).toList();
 
-            notificationService.showNotification("¡Oferta publicada con éxito!");
-            getUI().ifPresent(ui -> ui.navigate("inicio"));
+            OfertaDTOFront dto = new OfertaDTOFront();
+            dto.setOferta(oferta);
+            dto.setFotos(fotos);
+
+            try {
+                HttpClient client = HttpClient.newHttpClient();
+                ObjectMapper mapper = new ObjectMapper();
+                String json = mapper.writeValueAsString(dto);
+
+                HttpRequest request = HttpRequest.newBuilder()
+                        .uri(URI.create("http://localhost:8082/api/ofertas/crear"))
+                        .header("Content-Type", "application/json")
+                        .POST(HttpRequest.BodyPublishers.ofString(json))
+                        .build();
+
+                client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+                        .thenAccept(response -> {
+                            if (response.statusCode() == 200) {
+                                getUI().ifPresent(ui -> ui.access(() -> {
+                                    notificationService.showNotification("\u00a1Oferta publicada!");
+                                    ui.navigate("inicio");
+                                }));
+                            } else {
+                                notificationService.showNotification("Error al publicar oferta");
+                            }
+                        });
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                notificationService.showNotification("Error al enviar datos");
+            }
         });
 
         publicarButton.addClassName("publicar-button");
@@ -127,21 +157,5 @@ public class CrearOferta extends VerticalLayout {
         );
 
         add(formularioLayout);
-    }
-
-    private OfertaF mapDTOToOferta(OfertaDTOF dto) {
-        OfertaF ofertaF = new OfertaF();
-        ofertaF.setTitle(dto.getTitle());
-        ofertaF.setDescription(dto.getDescription());
-        ofertaF.setUniversidad(dto.getUniversidad());
-        ofertaF.setLocation(dto.getLocation());
-        ofertaF.setPrice(dto.getPrice());
-        ofertaF.setFotos(dto.getFotos());
-        ofertaF.setGuests(dto.getGuests());
-        ofertaF.setPreferredGender(dto.getPreferredGender());
-        ofertaF.setHasPool(dto.getHasPool());
-        ofertaF.setCreatedBy(dto.getCreatedBy());
-        ofertaF.setEdadmax(dto.getEdadmax());
-        return ofertaF;
     }
 }
