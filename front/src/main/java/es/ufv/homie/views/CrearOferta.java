@@ -6,7 +6,6 @@ import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.NumberField;
@@ -16,8 +15,8 @@ import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import es.ufv.homie.model.Oferta;
-import es.ufv.homie.model.OfertaDTO;
+import es.ufv.homie.model.OfertaF;
+import es.ufv.homie.model.OfertaDTOF;
 import es.ufv.homie.services.NotificationService;
 import es.ufv.homie.services.OfertaService;
 
@@ -97,7 +96,7 @@ public class CrearOferta extends VerticalLayout {
         });
 
         Button publicarButton = new Button("Publicar", e -> {
-            OfertaDTO dto = new OfertaDTO();
+            OfertaDTOF dto = new OfertaDTOF();
             dto.setTitle(tituloOferta.getValue());
             dto.setLocation(ubicacion.getValue());
             dto.setGuests(numeroInquilinos.getValue());
@@ -110,8 +109,8 @@ public class CrearOferta extends VerticalLayout {
             dto.setCreatedBy(1); // TODO: Reemplazar con ID del usuario autenticado
             dto.setFotos(nombresImagenes);
 
-            Oferta oferta = mapDTOToOferta(dto);
-            ofertaService.publicarOferta(oferta);
+            OfertaF ofertaF = mapDTOToOferta(dto);
+            ofertaService.publicarOferta(ofertaF);
 
             notificationService.showNotification("¡Oferta publicada con éxito!");
             getUI().ifPresent(ui -> ui.navigate("inicio"));
@@ -130,19 +129,19 @@ public class CrearOferta extends VerticalLayout {
         add(formularioLayout);
     }
 
-    private Oferta mapDTOToOferta(OfertaDTO dto) {
-        Oferta oferta = new Oferta();
-        oferta.setTitle(dto.getTitle());
-        oferta.setDescription(dto.getDescription());
-        oferta.setUniversidad(dto.getUniversidad());
-        oferta.setLocation(dto.getLocation());
-        oferta.setPrice(dto.getPrice());
-        oferta.setFotos(dto.getFotos());
-        oferta.setGuests(dto.getGuests());
-        oferta.setPreferredGender(dto.getPreferredGender());
-        oferta.setHasPool(dto.getHasPool());
-        oferta.setCreatedBy(dto.getCreatedBy());
-        oferta.setEdadmax(dto.getEdadmax());
-        return oferta;
+    private OfertaF mapDTOToOferta(OfertaDTOF dto) {
+        OfertaF ofertaF = new OfertaF();
+        ofertaF.setTitle(dto.getTitle());
+        ofertaF.setDescription(dto.getDescription());
+        ofertaF.setUniversidad(dto.getUniversidad());
+        ofertaF.setLocation(dto.getLocation());
+        ofertaF.setPrice(dto.getPrice());
+        ofertaF.setFotos(dto.getFotos());
+        ofertaF.setGuests(dto.getGuests());
+        ofertaF.setPreferredGender(dto.getPreferredGender());
+        ofertaF.setHasPool(dto.getHasPool());
+        ofertaF.setCreatedBy(dto.getCreatedBy());
+        ofertaF.setEdadmax(dto.getEdadmax());
+        return ofertaF;
     }
 }

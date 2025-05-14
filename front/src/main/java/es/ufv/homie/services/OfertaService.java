@@ -1,6 +1,6 @@
 package es.ufv.homie.services;
 
-import es.ufv.homie.model.Oferta;
+import es.ufv.homie.model.OfertaF;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -14,18 +14,18 @@ public class OfertaService {
     private final RestTemplate restTemplate = new RestTemplate();
     private final String backendUrl = "http://localhost:8082/api/ofertas";
 
-    private final List<Oferta> favoritos = new ArrayList<>();
+    private final List<OfertaF> favoritos = new ArrayList<>();
 
-    public void publicarOferta(Oferta oferta) {
+    public void publicarOferta(OfertaF ofertaF) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<Oferta> request = new HttpEntity<>(oferta, headers);
-        restTemplate.postForEntity(backendUrl + "/crear", request, Oferta.class);
+        HttpEntity<OfertaF> request = new HttpEntity<>(ofertaF, headers);
+        restTemplate.postForEntity(backendUrl + "/crear", request, OfertaF.class);
     }
 
-    public List<Oferta> obtenerOfertasDesdeBackend() {
+    public List<OfertaF> obtenerOfertasDesdeBackend() {
         try {
-            ResponseEntity<Oferta[]> response = restTemplate.getForEntity(backendUrl, Oferta[].class);
+            ResponseEntity<OfertaF[]> response = restTemplate.getForEntity(backendUrl, OfertaF[].class);
             if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
                 return List.of(response.getBody());
             }
@@ -36,13 +36,13 @@ public class OfertaService {
     }
 
     // ✅ FAVORITOS: Agregar y obtener
-    public void addFavorito(Oferta oferta) {
-        if (!favoritos.contains(oferta)) {
-            favoritos.add(oferta);
+    public void addFavorito(OfertaF ofertaF) {
+        if (!favoritos.contains(ofertaF)) {
+            favoritos.add(ofertaF);
         }
     }
 
-    public List<Oferta> getFavoritos() {
+    public List<OfertaF> getFavoritos() {
         return new ArrayList<>(favoritos);
     }
 }

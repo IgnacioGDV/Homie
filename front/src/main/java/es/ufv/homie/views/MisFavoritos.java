@@ -10,7 +10,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import es.ufv.homie.model.Oferta;
+import es.ufv.homie.model.OfertaF;
 import es.ufv.homie.services.OfertaService;
 
 import java.util.List;
@@ -47,23 +47,23 @@ import java.util.List;
         VerticalLayout content = new VerticalLayout();
         content.addClassName("favoritos-content");
 
-        List<Oferta> favoritos = ofertaService.getFavoritos(); // ✅ Ahora usando la instancia
+        List<OfertaF> favoritos = ofertaService.getFavoritos(); // ✅ Ahora usando la instancia
         if (favoritos.isEmpty()) {
             content.add(new Span("No tienes ofertas en favoritos."));
         } else {
-            for (Oferta oferta : favoritos) {
+            for (OfertaF ofertaF : favoritos) {
                 VerticalLayout card = new VerticalLayout();
                 card.addClassName("favoritos-card");
 
-                Span titulo = new Span(oferta.getTitle());
-                Span precio = new Span("Precio: €" + oferta.getPrice());
-                Span universidad = new Span("Universidad: " + oferta.getUniversidad());
-                Span ubicacion = new Span("Ubicación: " + oferta.getLocation());
-                Span descripcion = new Span(oferta.getDescription());
+                Span titulo = new Span(ofertaF.getTitle());
+                Span precio = new Span("Precio: €" + ofertaF.getPrice());
+                Span universidad = new Span("Universidad: " + ofertaF.getUniversidad());
+                Span ubicacion = new Span("Ubicación: " + ofertaF.getLocation());
+                Span descripcion = new Span(ofertaF.getDescription());
 
                 Image imagen = new Image();
-                if (oferta.getFotos() != null && !oferta.getFotos().isEmpty()) {
-                    imagen.setSrc("http://localhost:8082/api/photos/by-name/" + oferta.getFotos().get(0));
+                if (ofertaF.getFotos() != null && !ofertaF.getFotos().isEmpty()) {
+                    imagen.setSrc("http://localhost:8082/api/photos/by-name/" + ofertaF.getFotos().get(0));
                 } else {
                     imagen.setSrc("icons/piso1.jpg");
                 }

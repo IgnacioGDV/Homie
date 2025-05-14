@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication(scanBasePackages = "es.ufv.homie")
 @EntityScan(basePackages = "es.ufv.homie.model")
+
+
 @EnableJpaRepositories(basePackages = "es.ufv.homie.repository")
 public class BackApplication {
 	public static void main(String[] args) {

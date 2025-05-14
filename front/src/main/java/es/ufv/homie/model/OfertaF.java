@@ -2,8 +2,9 @@ package es.ufv.homie.model;
 
 import java.util.List;
 
-public class OfertaDTO {
+public class OfertaF {
 
+    private Long idoffer;
     private String title;
     private String location;
     private Integer guests;
@@ -16,9 +17,21 @@ public class OfertaDTO {
     private Integer edadmax;
     private List<String> fotos;
 
-    public OfertaDTO() {}
+    public OfertaF() {}
 
-    // Getters y setters
+    public OfertaF(String title, String description, String universidad, String location, Double price, List<String> fotos) {
+        this.title = title;
+        this.description = description;
+        this.universidad = universidad;
+        this.location = location;
+        this.price = price;
+        this.fotos = fotos;
+    }
+
+    // Getters y setters (asegúrate de tenerlos todos generados)
+    public Long getIdoffer() { return idoffer; }
+    public void setIdoffer(Long idoffer) { this.idoffer = idoffer; }
+
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
 

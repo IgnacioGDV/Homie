@@ -1,6 +1,6 @@
 package es.ufv.homie.services;
 
-import es.ufv.homie.model.Usuario;
+import es.ufv.homie.model.UsuarioF;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -20,7 +20,7 @@ public class UsuarioService {
     }
 
     public void registerUser(String email, String password, String phone, String birthDate, String role) {
-        Usuario nuevo = new Usuario();
+        UsuarioF nuevo = new UsuarioF();
         nuevo.setEmail(email);
         nuevo.setPassword(password);
         nuevo.setPhone(phone);
@@ -31,8 +31,8 @@ public class UsuarioService {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<Usuario> request = new HttpEntity<>(nuevo, headers);
-        restTemplate.postForEntity(backendUrl + "/crear", request, Usuario.class);
+        HttpEntity<UsuarioF> request = new HttpEntity<>(nuevo, headers);
+        restTemplate.postForEntity(backendUrl + "/crear", request, UsuarioF.class);
     }
 
     public boolean exists(String email) {
@@ -40,8 +40,8 @@ public class UsuarioService {
                 .fromHttpUrl(backendUrl + "/buscar")
                 .queryParam("email", email);
         try {
-            Usuario usuario = restTemplate.getForObject(builder.toUriString(), Usuario.class);
-            return usuario != null;
+            UsuarioF usuarioF = restTemplate.getForObject(builder.toUriString(), UsuarioF.class);
+            return usuarioF != null;
         } catch (Exception e) {
             return false;
         }
@@ -65,8 +65,8 @@ public class UsuarioService {
                 .fromHttpUrl(backendUrl + "/buscar")
                 .queryParam("email", email);
         try {
-            Usuario usuario = restTemplate.getForObject(builder.toUriString(), Usuario.class);
-            return usuario != null ? usuario.getRole() : null;
+            UsuarioF usuarioF = restTemplate.getForObject(builder.toUriString(), UsuarioF.class);
+            return usuarioF != null ? usuarioF.getRole() : null;
         } catch (Exception e) {
             return null;
         }

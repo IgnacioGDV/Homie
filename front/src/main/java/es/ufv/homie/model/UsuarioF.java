@@ -1,35 +1,17 @@
 package es.ufv.homie.model;
 
-import jakarta.persistence.*;
 import java.time.LocalDate;
 
-@Entity
-@Table(name = "users")
-public class Usuario {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "iduser")
+public class UsuarioF {
     private Long id;
-
-    @Column(nullable = false, unique = true)
     private String email;
-
-    @Column(nullable = false)
     private String password;
-
     private String phone;
-
-    @Column(name = "birth_date")
     private LocalDate birthDate;
-
-    @Column(nullable = false)
     private String role;
-
     private String universidad;
 
-    public Usuario() {}
-
+    // Getters y setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

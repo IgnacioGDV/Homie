@@ -16,8 +16,9 @@ public class Photo {
     private String url;
 
     @Lob
-    @Column(name = "data")
+    @Column(columnDefinition = "BYTEA")
     private byte[] data;
+
 
     // --- Getters y Setters ---
 

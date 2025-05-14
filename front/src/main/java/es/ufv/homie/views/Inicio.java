@@ -13,7 +13,7 @@ import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import es.ufv.homie.model.Oferta;
+import es.ufv.homie.model.OfertaF;
 import es.ufv.homie.services.OfertaService;
 import jakarta.annotation.security.PermitAll;
 import java.util.ArrayList;
@@ -72,9 +72,9 @@ public class Inicio extends VerticalLayout {
         mainContent.setAlignItems(FlexComponent.Alignment.CENTER);
         mainContent.add(new Image("icons/homiepng.png", "Logo de Homie"));
 
-        List<Oferta> ofertas = obtenerOfertasDesdeBackend();
+        List<OfertaF> ofertaFS = obtenerOfertasDesdeBackend();
 
-        if (!ofertas.isEmpty()) {
+        if (!ofertaFS.isEmpty()) {
             int[] ofertaActual = {0};
             int[] imagenActual = {0};
 
@@ -100,7 +100,7 @@ public class Inicio extends VerticalLayout {
 
             Button guardarButton = new Button(new Icon(VaadinIcon.HEART));
             guardarButton.addClickListener(e -> {
-                ofertaService.addFavorito(ofertas.get(ofertaActual[0]));
+                ofertaService.addFavorito(ofertaFS.get(ofertaActual[0]));
                 Notification.show("¡Añadido a favoritos!");
             });
 
@@ -124,34 +124,34 @@ public class Inicio extends VerticalLayout {
                 if (ofertaActual[0] > 0) {
                     ofertaActual[0]--;
                     imagenActual[0] = 0;
-                    actualizarVista(ofertas.get(ofertaActual[0]), nombreOferta, descripcionOferta, universidad, ubicacion, precioOferta, imagenCarrusel, imagenActual);
+                    actualizarVista(ofertaFS.get(ofertaActual[0]), nombreOferta, descripcionOferta, universidad, ubicacion, precioOferta, imagenCarrusel, imagenActual);
                 }
             });
 
             ofertaSiguiente.addClickListener(e -> {
-                if (ofertaActual[0] < ofertas.size() - 1) {
+                if (ofertaActual[0] < ofertaFS.size() - 1) {
                     ofertaActual[0]++;
                     imagenActual[0] = 0;
-                    actualizarVista(ofertas.get(ofertaActual[0]), nombreOferta, descripcionOferta, universidad, ubicacion, precioOferta, imagenCarrusel, imagenActual);
+                    actualizarVista(ofertaFS.get(ofertaActual[0]), nombreOferta, descripcionOferta, universidad, ubicacion, precioOferta, imagenCarrusel, imagenActual);
                 }
             });
 
             anteriorImagen.addClickListener(e -> {
                 if (imagenActual[0] > 0) {
                     imagenActual[0]--;
-                    imagenCarrusel.setSrc("http://localhost:8082/api/photos/by-name/" + ofertas.get(ofertaActual[0]).getFotos().get(imagenActual[0]));
+                    imagenCarrusel.setSrc("http://localhost:8082/api/photos/by-name/" + ofertaFS.get(ofertaActual[0]).getFotos().get(imagenActual[0]));
                 }
             });
 
             siguienteImagen.addClickListener(e -> {
-                if (imagenActual[0] < ofertas.get(ofertaActual[0]).getFotos().size() - 1) {
+                if (imagenActual[0] < ofertaFS.get(ofertaActual[0]).getFotos().size() - 1) {
                     imagenActual[0]++;
-                    imagenCarrusel.setSrc("http://localhost:8082/api/photos/by-name/" + ofertas.get(ofertaActual[0]).getFotos().get(imagenActual[0]));
+                    imagenCarrusel.setSrc("http://localhost:8082/api/photos/by-name/" + ofertaFS.get(ofertaActual[0]).getFotos().get(imagenActual[0]));
                 }
             });
 
             mainContent.add(navegacionOfertas);
-            actualizarVista(ofertas.get(0), nombreOferta, descripcionOferta, universidad, ubicacion, precioOferta, imagenCarrusel, imagenActual);
+            actualizarVista(ofertaFS.get(0), nombreOferta, descripcionOferta, universidad, ubicacion, precioOferta, imagenCarrusel, imagenActual);
         }
 
         HorizontalLayout footer = new HorizontalLayout(new Span("© 2024 Homie. Todos los derechos reservados."));
@@ -166,12 +166,12 @@ public class Inicio extends VerticalLayout {
         add(navBar, layout, footer);
     }
 
-    private List<Oferta> obtenerOfertasDesdeBackend() {
+    private List<OfertaF> obtenerOfertasDesdeBackend() {
         try {
-            Oferta[] response = restTemplate.getForObject(BACKEND_URL, Oferta[].class);
+            OfertaF[] response = restTemplate.getForObject(BACKEND_URL, OfertaF[].class);
             if (response != null) {
-                List<Oferta> lista = List.of(response);
-                for (Oferta o : lista) {
+                List<OfertaF> lista = List.of(response);
+                for (OfertaF o : lista) {
                     if (o.getFotos() == null) o.setFotos(new ArrayList<>()); // evitar null
                 }
                 return lista;
@@ -182,15 +182,15 @@ public class Inicio extends VerticalLayout {
         return new ArrayList<>();
     }
 
-    private void actualizarVista(Oferta oferta, Span nombre, Span desc, Span uni, Span ubic, Span precio, Image img, int[] imgIndex) {
-        nombre.setText(oferta.getTitle());
-        desc.setText(oferta.getDescription());
-        uni.setText("Universidad: " + oferta.getUniversidad());
-        ubic.setText("Ubicación: " + oferta.getLocation());
-        precio.setText("Precio: €" + oferta.getPrice());
+    private void actualizarVista(OfertaF ofertaF, Span nombre, Span desc, Span uni, Span ubic, Span precio, Image img, int[] imgIndex) {
+        nombre.setText(ofertaF.getTitle());
+        desc.setText(ofertaF.getDescription());
+        uni.setText("Universidad: " + ofertaF.getUniversidad());
+        ubic.setText("Ubicación: " + ofertaF.getLocation());
+        precio.setText("Precio: €" + ofertaF.getPrice());
 
-        if (oferta.getFotos() != null && !oferta.getFotos().isEmpty()) {
-            img.setSrc("http://localhost:8082/api/photos/by-name/" + oferta.getFotos().get(imgIndex[0]));
+        if (ofertaF.getFotos() != null && !ofertaF.getFotos().isEmpty()) {
+            img.setSrc("http://localhost:8082/api/photos/by-name/" + ofertaF.getFotos().get(imgIndex[0]));
         } else {
             img.setSrc("icons/piso1.jpg");
         }

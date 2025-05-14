@@ -1,12 +1,12 @@
 package es.ufv.homie.model;
 
-public class Photo {
+public class PhotoFront {
     private String url;
     private String data; // <-- Base64
 
-    public Photo() {}
+    public PhotoFront() {}
 
-    public Photo(String url, String data) {
+    public PhotoFront(String url, String data) {
         this.url = url;
         this.data = data;
     }
