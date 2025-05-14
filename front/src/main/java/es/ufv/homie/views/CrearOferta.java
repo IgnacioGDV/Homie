@@ -44,7 +44,7 @@ public class CrearOferta extends VerticalLayout {
         Image logo = new Image("icons/homiepng.png", "Homie Logo");
         logo.addClassName("logo-homie");
 
-        Span titulo = new Span("\u00a1Bienvenido, Anfitrión!");
+        Span titulo = new Span("¡Bienvenido, Anfitrión!");
         titulo.getStyle().set("font-size", "24px").set("color", "#002147").set("font-weight", "bold");
 
         Span descripcionIntro = new Span("Crea tu oferta para que los inquilinos de Homie puedan aplicar a ella.");
@@ -68,8 +68,9 @@ public class CrearOferta extends VerticalLayout {
 
         TextArea descripcion = new TextArea("Descripción");
 
-        TextField universidad = new TextField("Universidad");
-        universidad.setPlaceholder("Ej. UFV");
+        // ✅ Universidad como ComboBox
+        ComboBox<String> universidad = new ComboBox<>("Universidad");
+        universidad.setItems("UFV", "UCM", "UPM", "UAM", "UC3M", "URJC");
 
         IntegerField edadMaxima = new IntegerField("Edad máxima permitida");
         edadMaxima.setMin(18);
@@ -107,10 +108,10 @@ public class CrearOferta extends VerticalLayout {
             oferta.setPrice(precio.getValue());
             oferta.setPreferredGender(genero.getValue());
             oferta.setDescription(descripcion.getValue());
-            oferta.setUniversidad(universidad.getValue());
+            oferta.setUniversidad(universidad.getValue()); // ComboBox seleccionado
             oferta.setEdadmax(edadMaxima.getValue());
             oferta.setHasPool(piscina.getValue());
-            oferta.setCreatedBy(1); // Cambiar por ID del usuario logueado
+            oferta.setCreatedBy(1); // ID del usuario logueado
 
             List<PhotoFront> fotos = nombresImagenes.stream().map(nombre -> new PhotoFront(nombre, "")).toList();
 
@@ -133,7 +134,7 @@ public class CrearOferta extends VerticalLayout {
                         .thenAccept(response -> {
                             if (response.statusCode() == 200) {
                                 getUI().ifPresent(ui -> ui.access(() -> {
-                                    notificationService.showNotification("\u00a1Oferta publicada!");
+                                    notificationService.showNotification("¡Oferta publicada!");
                                     ui.navigate("inicio");
                                 }));
                             } else {

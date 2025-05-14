@@ -16,8 +16,8 @@ import com.vaadin.flow.router.Route;
 import es.ufv.homie.model.OfertaF;
 import es.ufv.homie.services.OfertaService;
 import jakarta.annotation.security.PermitAll;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 import org.springframework.web.client.RestTemplate;
 
 @Route("inicio")
@@ -29,6 +29,26 @@ public class Inicio extends VerticalLayout {
     private final RestTemplate restTemplate = new RestTemplate();
     private final String BACKEND_URL = "http://localhost:8082/api/ofertas";
 
+    private ComboBox<String> universityFilter;
+    private ComboBox<String> locationFilter;
+    private NumberField minPrice;
+    private NumberField maxPrice;
+    private NumberField maxAge;
+    private RadioButtonGroup<String> genderFilter;
+    private RadioButtonGroup<String> poolFilter;
+
+    private List<OfertaF> ofertas;
+    private int[] ofertaActual = {0};
+    private int[] imagenActual = {0};
+
+    // Componentes visuales reutilizables
+    private Span nombreOferta = new Span();
+    private Span descripcionOferta = new Span();
+    private Span universidad = new Span();
+    private Span ubicacion = new Span();
+    private Span precioOferta = new Span();
+    private Image imagenCarrusel = new Image();
+
     public Inicio(OfertaService ofertaService) {
         setSizeFull();
         setPadding(false);
@@ -36,6 +56,7 @@ public class Inicio extends VerticalLayout {
         getStyle().set("margin", "0");
         addClassName("inicio-background");
 
+        // NAVBAR
         HorizontalLayout navBar = new HorizontalLayout();
         navBar.addClassName("navbar");
         navBar.setWidthFull();
@@ -45,39 +66,37 @@ public class Inicio extends VerticalLayout {
 
         Button exploreButton = new Button("Explorar Ofertas", new Icon(VaadinIcon.SEARCH));
         exploreButton.addClassName("explore-button");
-
         Button savedButton = new Button("Guardados", new Icon(VaadinIcon.HEART), e -> getUI().ifPresent(ui -> ui.navigate("mis-favoritos")));
         savedButton.addClassName("saved-button");
-
         Button aboutButton = new Button("Quienes somos", new Icon(VaadinIcon.INFO_CIRCLE), e -> getUI().ifPresent(ui -> ui.navigate("quienessomos")));
         aboutButton.addClassName("about-button");
-
         Button profileButton = new Button("Login", new Icon(VaadinIcon.USER), e -> getUI().ifPresent(ui -> ui.navigate("login")));
         profileButton.addClassName("profile-button");
 
-        HorizontalLayout navButtons = new HorizontalLayout(exploreButton, savedButton, aboutButton, profileButton);
-        navButtons.addClassName("nav-buttons");
+        navBar.add(homieLogo, new HorizontalLayout(exploreButton, savedButton, aboutButton, profileButton));
 
-        navBar.add(homieLogo, navButtons);
-
+        // FILTROS
         VerticalLayout filterMenu = new VerticalLayout();
         filterMenu.addClassName("filter-menu");
         filterMenu.setWidth("250px");
 
-        filterMenu.add(
-                new Span("Universidad"),
-                new ComboBox<>("Universidad", "UFV", "UCM", "UPM", "UAM", "UC3M", "URJC"),
-                new Span("Ubicación"),
-                new ComboBox<>("Ubicación", "Alcobendas", "Alcorcón", "Boadilla", "Las Rozas"),
-                new Span("Rango de precio (€)"),
-                new HorizontalLayout(new NumberField("Min."), new NumberField("Max.")),
-                new Span("Edad máxima"),
-                new NumberField("Edad..."),
-                new RadioButtonGroup<>("Género", "Masculino", "Femenino"),
-                new RadioButtonGroup<>("Piscina", "Sí", "No"),
-                new Button("Aplicar")
-        );
+        universityFilter = new ComboBox<>("Universidad", "UFV", "UCM", "UPM", "UAM", "UC3M", "URJC");
+        locationFilter = new ComboBox<>("Ubicación", "Alcobendas", "Alcorcón", "Boadilla", "Las Rozas");
+        minPrice = new NumberField("Min.");
+        maxPrice = new NumberField("Max.");
+        maxAge = new NumberField("Edad...");
+        genderFilter = new RadioButtonGroup<>("Género", "Masculino", "Femenino");
+        poolFilter = new RadioButtonGroup<>("Piscina", "Sí", "No");
 
+        Button applyFilters = new Button("Aplicar", e -> aplicarFiltros());
+        applyFilters.addClassName("apply-filters-button");
+
+        filterMenu.add(new Span("Universidad"), universityFilter,
+                new Span("Ubicación"), locationFilter,
+                new Span("Rango de precio (€)"), new HorizontalLayout(minPrice, maxPrice),
+                new Span("Edad máxima"), maxAge, genderFilter, poolFilter, applyFilters);
+
+        // CONTENIDO PRINCIPAL
         VerticalLayout mainContent = new VerticalLayout();
         mainContent.addClassName("main-content");
         mainContent.setWidthFull();
@@ -87,91 +106,35 @@ public class Inicio extends VerticalLayout {
         logoCentral.addClassName("logo-centered");
         mainContent.add(logoCentral);
 
-        List<OfertaF> ofertaFS = obtenerOfertasDesdeBackend();
+        precioOferta.getStyle().set("font-weight", "bold").set("font-size", "18px");
+        imagenCarrusel.addClassName("imagen-oferta");
 
-        if (!ofertaFS.isEmpty()) {
-            int[] ofertaActual = {0};
-            int[] imagenActual = {0};
+        Button anteriorImagen = new Button("←", e -> imagenAnterior());
+        Button siguienteImagen = new Button("→", e -> imagenSiguiente());
 
-            VerticalLayout ofertaCard = new VerticalLayout();
-            ofertaCard.addClassName("offer-card");
-            ofertaCard.setWidth("80%");
+        Button guardarButton = new Button(new Icon(VaadinIcon.HEART), e -> guardarOferta(ofertaService));
+        guardarButton.addClassName("more-info-button");
 
-            Span nombreOferta = new Span();
-            nombreOferta.getStyle().set("font-weight", "bold").set("font-size", "20px");
+        Button masInfoButton = new Button("Más Info");
+        masInfoButton.addClassName("more-info-button");
 
-            Span descripcionOferta = new Span();
-            Span universidad = new Span();
-            Span ubicacion = new Span();
-            Span precioOferta = new Span();
-            precioOferta.getStyle().set("font-weight", "bold").set("font-size", "18px");
+        HorizontalLayout botones = new HorizontalLayout(masInfoButton, guardarButton);
+        HorizontalLayout carrusel = new HorizontalLayout(anteriorImagen, imagenCarrusel, siguienteImagen);
+        carrusel.setAlignItems(FlexComponent.Alignment.CENTER);
 
-            Image imagenCarrusel = new Image();
-            imagenCarrusel.addClassName("imagen-oferta");
+        VerticalLayout ofertaCard = new VerticalLayout(nombreOferta, descripcionOferta, universidad, ubicacion, precioOferta, carrusel, botones);
+        ofertaCard.addClassName("offer-card");
+        ofertaCard.setWidth("80%");
+        mainContent.add(ofertaCard);
 
-            Button anteriorImagen = new Button("\u2190");
-            Button siguienteImagen = new Button("\u2192");
+        Button ofertaAnterior = new Button("← Oferta", e -> mostrarAnterior());
+        Button ofertaSiguiente = new Button("Oferta →", e -> mostrarSiguiente());
+        ofertaAnterior.addClassName("oferta-button");
+        ofertaSiguiente.addClassName("oferta-button");
+        mainContent.add(new HorizontalLayout(ofertaAnterior, ofertaSiguiente));
 
-            Button guardarButton = new Button(new Icon(VaadinIcon.HEART));
-            guardarButton.addClassName("more-info-button");
-            guardarButton.addClickListener(e -> {
-                ofertaService.addFavorito(ofertaFS.get(ofertaActual[0]));
-                Notification.show("\u00a1A\u00f1adido a favoritos!");
-            });
-
-            Button masInfoButton = new Button("Más Info");
-            masInfoButton.addClassName("more-info-button");
-
-            HorizontalLayout botones = new HorizontalLayout(masInfoButton, guardarButton);
-            HorizontalLayout carruselImagenes = new HorizontalLayout(anteriorImagen, imagenCarrusel, siguienteImagen);
-            carruselImagenes.setAlignItems(FlexComponent.Alignment.CENTER);
-
-            ofertaCard.add(nombreOferta, descripcionOferta, universidad, ubicacion, precioOferta, carruselImagenes, botones);
-            mainContent.add(ofertaCard);
-
-            Button ofertaAnterior = new Button("\u2190 Oferta");
-            Button ofertaSiguiente = new Button("Oferta \u2192");
-            ofertaAnterior.addClassName("oferta-button");
-            ofertaSiguiente.addClassName("oferta-button");
-
-            HorizontalLayout navegacionOfertas = new HorizontalLayout(ofertaAnterior, ofertaSiguiente);
-            navegacionOfertas.addClassName("navegacion-ofertas");
-
-            ofertaAnterior.addClickListener(e -> {
-                if (ofertaActual[0] > 0) {
-                    ofertaActual[0]--;
-                    imagenActual[0] = 0;
-                    actualizarVista(ofertaFS.get(ofertaActual[0]), nombreOferta, descripcionOferta, universidad, ubicacion, precioOferta, imagenCarrusel, imagenActual);
-                }
-            });
-
-            ofertaSiguiente.addClickListener(e -> {
-                if (ofertaActual[0] < ofertaFS.size() - 1) {
-                    ofertaActual[0]++;
-                    imagenActual[0] = 0;
-                    actualizarVista(ofertaFS.get(ofertaActual[0]), nombreOferta, descripcionOferta, universidad, ubicacion, precioOferta, imagenCarrusel, imagenActual);
-                }
-            });
-
-            anteriorImagen.addClickListener(e -> {
-                if (imagenActual[0] > 0) {
-                    imagenActual[0]--;
-                    imagenCarrusel.setSrc("http://localhost:8082/api/photos/by-name/" + ofertaFS.get(ofertaActual[0]).getFotos().get(imagenActual[0]));
-                }
-            });
-
-            siguienteImagen.addClickListener(e -> {
-                if (imagenActual[0] < ofertaFS.get(ofertaActual[0]).getFotos().size() - 1) {
-                    imagenActual[0]++;
-                    imagenCarrusel.setSrc("http://localhost:8082/api/photos/by-name/" + ofertaFS.get(ofertaActual[0]).getFotos().get(imagenActual[0]));
-                }
-            });
-
-            mainContent.add(navegacionOfertas);
-            actualizarVista(ofertaFS.get(0), nombreOferta, descripcionOferta, universidad, ubicacion, precioOferta, imagenCarrusel, imagenActual);
-        }
-
-        HorizontalLayout footer = new HorizontalLayout(new Span("\u00a9 2024 Homie. Todos los derechos reservados."));
+        // FOOTER
+        HorizontalLayout footer = new HorizontalLayout(new Span("© 2024 Homie. Todos los derechos reservados."));
         footer.addClassName("footer");
         footer.setWidthFull();
 
@@ -181,6 +144,71 @@ public class Inicio extends VerticalLayout {
         layout.addClassName("main-layout");
 
         add(navBar, layout, footer);
+
+        ofertas = obtenerOfertasDesdeBackend();
+        if (!ofertas.isEmpty()) actualizarVista(ofertas.get(0));
+    }
+
+    private void aplicarFiltros() {
+        List<OfertaF> filtradas = new ArrayList<>(ofertas);
+
+        filtradas = filtradas.stream()
+                .sorted(Comparator.comparingInt(this::calcularCoincidencias).reversed())
+                .collect(Collectors.toList());
+
+        if (!filtradas.isEmpty()) {
+            ofertaActual[0] = 0;
+            imagenActual[0] = 0;
+            actualizarVista(filtradas.get(0));
+        } else {
+            Notification.show("No hay ofertas que coincidan con los filtros.");
+        }
+    }
+
+    private void mostrarAnterior() {
+        if (ofertaActual[0] > 0) {
+            ofertaActual[0]--;
+            imagenActual[0] = 0;
+            actualizarVista(ofertas.get(ofertaActual[0]));
+        }
+    }
+
+    private void mostrarSiguiente() {
+        if (ofertaActual[0] < ofertas.size() - 1) {
+            ofertaActual[0]++;
+            imagenActual[0] = 0;
+            actualizarVista(ofertas.get(ofertaActual[0]));
+        }
+    }
+
+    private void imagenAnterior() {
+        if (imagenActual[0] > 0) {
+            imagenActual[0]--;
+            imagenCarrusel.setSrc("http://localhost:8082/api/photos/by-name/" + ofertas.get(ofertaActual[0]).getFotos().get(imagenActual[0]));
+        }
+    }
+
+    private void imagenSiguiente() {
+        if (imagenActual[0] < ofertas.get(ofertaActual[0]).getFotos().size() - 1) {
+            imagenActual[0]++;
+            imagenCarrusel.setSrc("http://localhost:8082/api/photos/by-name/" + ofertas.get(ofertaActual[0]).getFotos().get(imagenActual[0]));
+        }
+    }
+
+    private void guardarOferta(OfertaService ofertaService) {
+        ofertaService.addFavorito(ofertas.get(ofertaActual[0]));
+        Notification.show("¡Añadido a favoritos!");
+    }
+
+    private int calcularCoincidencias(OfertaF o) {
+        int puntos = 0;
+        if (universityFilter.getValue() != null && universityFilter.getValue().equalsIgnoreCase(o.getUniversidad())) puntos++;
+        if (locationFilter.getValue() != null && locationFilter.getValue().equalsIgnoreCase(o.getLocation())) puntos++;
+        if (minPrice.getValue() != null && maxPrice.getValue() != null && o.getPrice() != null && o.getPrice() >= minPrice.getValue() && o.getPrice() <= maxPrice.getValue()) puntos++;
+        if (maxAge.getValue() != null && o.getEdadmax() != null && o.getEdadmax() <= maxAge.getValue()) puntos++;
+        if (genderFilter.getValue() != null && o.getPreferredGender() != null && o.getPreferredGender().equalsIgnoreCase(genderFilter.getValue())) puntos++;
+        if (poolFilter.getValue() != null && o.getHasPool() != null && ((poolFilter.getValue().equals("Sí") && o.getHasPool()) || (poolFilter.getValue().equals("No") && !o.getHasPool()))) puntos++;
+        return puntos;
     }
 
     private List<OfertaF> obtenerOfertasDesdeBackend() {
@@ -199,17 +227,17 @@ public class Inicio extends VerticalLayout {
         return new ArrayList<>();
     }
 
-    private void actualizarVista(OfertaF ofertaF, Span nombre, Span desc, Span uni, Span ubic, Span precio, Image img, int[] imgIndex) {
-        nombre.setText(ofertaF.getTitle());
-        desc.setText(ofertaF.getDescription());
-        uni.setText("Universidad: " + ofertaF.getUniversidad());
-        ubic.setText("Ubicación: " + ofertaF.getLocation());
-        precio.setText("Precio: €" + ofertaF.getPrice());
+    private void actualizarVista(OfertaF ofertaF) {
+        nombreOferta.setText(ofertaF.getTitle());
+        descripcionOferta.setText(ofertaF.getDescription());
+        universidad.setText("Universidad: " + ofertaF.getUniversidad());
+        ubicacion.setText("Ubicación: " + ofertaF.getLocation());
+        precioOferta.setText("Precio: €" + ofertaF.getPrice());
 
         if (ofertaF.getFotos() != null && !ofertaF.getFotos().isEmpty()) {
-            img.setSrc("http://localhost:8082/api/photos/by-name/" + ofertaF.getFotos().get(imgIndex[0]));
+            imagenCarrusel.setSrc("http://localhost:8082/api/photos/by-name/" + ofertaF.getFotos().get(imagenActual[0]));
         } else {
-            img.setSrc("icons/piso1.jpg");
+            imagenCarrusel.setSrc("icons/piso1.jpg");
         }
     }
 }
