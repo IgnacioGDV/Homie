@@ -87,7 +87,9 @@ public class Inicio extends VerticalLayout {
         filterMenu.setWidth("250px");
 
         universityFilter = new ComboBox<>("Universidad", "UFV", "UCM", "UPM", "UAM", "UC3M", "URJC");
-        locationFilter = new ComboBox<>("Ubicación", "Alcobendas", "Alcorcón", "Boadilla", "Las Rozas");
+        locationFilter = new ComboBox<>("Ubicación", "Alcobendas", "Aluche", "Boadilla", "Brunete", "Pozuelo", "Majadahonda", "Madrid Centro",
+                "Las Tablas", "Las Rozas", "Alcorcón", "Sanchinarro", "Getafe", "San Sebastián De Los Reyes",
+                "Villaverde", "Villaviciosa De Odón");
         minPrice = new NumberField("Min.");
         maxPrice = new NumberField("Max.");
         maxAge = new NumberField("Edad...");
@@ -262,7 +264,9 @@ public class Inicio extends VerticalLayout {
         if (ofertaF.getFotos() != null && !ofertaF.getFotos().isEmpty()) {
             imagenCarrusel.setSrc("http://localhost:8082/api/photos/by-name/" + ofertaF.getFotos().get(imagenActual[0]));
         } else {
-            imagenCarrusel.setSrc("icons/piso1.jpg");
+            int randomLocal = new Random().nextInt(5) + 1; // genera número entre 1 y 5
+            imagenCarrusel.setSrc("icons/piso" + randomLocal + ".jpg");
+
         }
     }
 
