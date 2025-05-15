@@ -12,21 +12,23 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import es.ufv.homie.model.OfertaF;
 import es.ufv.homie.services.OfertaService;
+import es.ufv.homie.services.LoginService;
 
 import java.util.List;
 
 @CssImport("./themes/styles/favoritos.css")
 @Route("mis-favoritos")
-@PageTitle("Mis Favoritos")public class MisFavoritos extends VerticalLayout {
+@PageTitle("Mis Favoritos")
+public class MisFavoritos extends VerticalLayout {
 
     public MisFavoritos(OfertaService ofertaService) {
         setSizeFull();
         setPadding(true);
         setSpacing(true);
         getStyle().set("margin", "0");
-
         addClassName("favoritos-view");
 
+        // NAVBAR
         HorizontalLayout navBar = new HorizontalLayout();
         navBar.addClassName("favoritos-navbar");
 
@@ -35,19 +37,32 @@ import java.util.List;
 
         Button exploreButton2 = new Button("Explorar Ofertas", new Icon(VaadinIcon.SEARCH),
                 e -> getUI().ifPresent(ui -> ui.navigate("inicio")));
+        exploreButton2.addClassName("favoritos-explore-button");
+
         Button savedButton2 = new Button("Guardados", new Icon(VaadinIcon.HEART));
+        savedButton2.addClassName("favoritos-saved-button");
+
         Button aboutButton2 = new Button("Quienes somos", new Icon(VaadinIcon.INFO_CIRCLE),
                 e -> getUI().ifPresent(ui -> ui.navigate("quienessomos")));
+        aboutButton2.addClassName("favoritos-about-button");
+
         Button profileButton2 = new Button("Login", new Icon(VaadinIcon.USER),
                 e -> getUI().ifPresent(ui -> ui.navigate("login")));
+        profileButton2.addClassName("favoritos-profile-button");
 
         HorizontalLayout navButtons = new HorizontalLayout(exploreButton2, savedButton2, aboutButton2, profileButton2);
+        navButtons.addClassName("favoritos-nav-buttons");
+
         navBar.add(homieLogo, navButtons);
 
+        // CONTENIDO
         VerticalLayout content = new VerticalLayout();
         content.addClassName("favoritos-content");
 
-        List<OfertaF> favoritos = ofertaService.getFavoritos(); // ✅ Ahora usando la instancia
+        // Obtener favoritos del usuario logueado
+        String email = LoginService.getEmail(); // Implementa este método para extraer el email del usuario logueado
+        List<OfertaF> favoritos = ofertaService.getFavoritosByEmail(email);
+
         if (favoritos.isEmpty()) {
             content.add(new Span("No tienes ofertas en favoritos."));
         } else {
@@ -74,8 +89,10 @@ import java.util.List;
             }
         }
 
+        // FOOTER
         HorizontalLayout footer = new HorizontalLayout();
         footer.add(new Span("© 2024 Homie. Todos los derechos reservados."));
+        footer.addClassName("favoritos-footer");
 
         add(navBar, content, footer);
     }

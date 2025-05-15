@@ -50,13 +50,41 @@ public class OfertaService {
     }
 
     // ✅ FAVORITOS: Agregar y obtener
-    public void addFavorito(OfertaF ofertaF) {
-        if (!favoritos.contains(ofertaF)) {
-            favoritos.add(ofertaF);
+    public void addFavorito(Long userId, Long ofertaId) {
+        String url = "http://localhost:8082/api/ofertas/favoritos/agregar?userId=" + userId + "&ofertaId=" + ofertaId;
+
+        try {
+            restTemplate.postForEntity(url, null, Void.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error al añadir favorito: " + e.getMessage());
         }
     }
 
-    public List<OfertaF> getFavoritos() {
-        return new ArrayList<>(favoritos);
+
+    public List<OfertaF> getFavoritosDeUsuario(Long userId) {
+        String url = backendUrl + "/favoritos/" + userId;
+        try {
+            ResponseEntity<OfertaF[]> response = restTemplate.getForEntity(url, OfertaF[].class);
+            return response.getBody() != null ? List.of(response.getBody()) : new ArrayList<>();
+        } catch (Exception e) {
+            return new ArrayList<>();
+        }
     }
+    public List<OfertaF> getFavoritosByEmail(String email) {
+        if (email == null) return new ArrayList<>();
+        try {
+            String url = backendUrl + "/favoritos?email=" + email;
+            ResponseEntity<OfertaF[]> response = restTemplate.getForEntity(url, OfertaF[].class);
+            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+                return List.of(response.getBody());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<>();
+    }
+
 }
+
+

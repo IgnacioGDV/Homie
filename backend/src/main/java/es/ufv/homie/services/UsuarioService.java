@@ -28,4 +28,5 @@ public class UsuarioService {
     public boolean existe(String email) {
         return usuarioRepository.findByEmail(email) != null;
     }
+
 }

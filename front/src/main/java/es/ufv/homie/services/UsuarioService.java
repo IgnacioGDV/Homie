@@ -71,4 +71,18 @@ public class UsuarioService {
             return null;
         }
     }
+    public Long getUserIdByEmail(String email) {
+        try {
+            UriComponentsBuilder builder = UriComponentsBuilder
+                    .fromHttpUrl(backendUrl + "/buscar")
+                    .queryParam("email", email);
+            UsuarioF usuarioF = restTemplate.getForObject(builder.toUriString(), UsuarioF.class);
+            return usuarioF != null ? usuarioF.getId() : null;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+
+
 }

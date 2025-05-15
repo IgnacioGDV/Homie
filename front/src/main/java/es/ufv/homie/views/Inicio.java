@@ -15,10 +15,15 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import es.ufv.homie.model.OfertaF;
 import es.ufv.homie.services.OfertaService;
+import es.ufv.homie.services.UsuarioService;
 import jakarta.annotation.security.PermitAll;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.client.RestTemplate;
+
 import java.util.*;
 import java.util.stream.Collectors;
-import org.springframework.web.client.RestTemplate;
 
 @Route("inicio")
 @CssImport("./themes/styles/styles.css")
@@ -26,7 +31,6 @@ import org.springframework.web.client.RestTemplate;
 @PermitAll
 public class Inicio extends VerticalLayout {
 
-    private final RestTemplate restTemplate = new RestTemplate();
     private final String BACKEND_URL = "http://localhost:8082/api/ofertas";
 
     private ComboBox<String> universityFilter;
@@ -41,13 +45,15 @@ public class Inicio extends VerticalLayout {
     private int[] ofertaActual = {0};
     private int[] imagenActual = {0};
 
-    // Componentes visuales reutilizables
     private Span nombreOferta = new Span();
     private Span descripcionOferta = new Span();
     private Span universidad = new Span();
     private Span ubicacion = new Span();
     private Span precioOferta = new Span();
     private Image imagenCarrusel = new Image();
+
+    @Autowired
+    private UsuarioService usuarioService;
 
     public Inicio(OfertaService ofertaService) {
         setSizeFull();
@@ -56,7 +62,6 @@ public class Inicio extends VerticalLayout {
         getStyle().set("margin", "0");
         addClassName("inicio-background");
 
-        // NAVBAR
         HorizontalLayout navBar = new HorizontalLayout();
         navBar.addClassName("navbar");
         navBar.setWidthFull();
@@ -75,7 +80,6 @@ public class Inicio extends VerticalLayout {
 
         navBar.add(homieLogo, new HorizontalLayout(exploreButton, savedButton, aboutButton, profileButton));
 
-        // FILTROS
         VerticalLayout filterMenu = new VerticalLayout();
         filterMenu.addClassName("filter-menu");
         filterMenu.setWidth("250px");
@@ -96,7 +100,6 @@ public class Inicio extends VerticalLayout {
                 new Span("Rango de precio (€)"), new HorizontalLayout(minPrice, maxPrice),
                 new Span("Edad máxima"), maxAge, genderFilter, poolFilter, applyFilters);
 
-        // CONTENIDO PRINCIPAL
         VerticalLayout mainContent = new VerticalLayout();
         mainContent.addClassName("main-content");
         mainContent.setWidthFull();
@@ -133,7 +136,6 @@ public class Inicio extends VerticalLayout {
         ofertaSiguiente.addClassName("oferta-button");
         mainContent.add(new HorizontalLayout(ofertaAnterior, ofertaSiguiente));
 
-        // FOOTER
         HorizontalLayout footer = new HorizontalLayout(new Span("© 2024 Homie. Todos los derechos reservados."));
         footer.addClassName("footer");
         footer.setWidthFull();
@@ -196,9 +198,24 @@ public class Inicio extends VerticalLayout {
     }
 
     private void guardarOferta(OfertaService ofertaService) {
-        ofertaService.addFavorito(ofertas.get(ofertaActual[0]));
-        Notification.show("¡Añadido a favoritos!");
+        String email = SecurityContextHolder.getContext().getAuthentication().getName(); // ✅ Obteniendo email correctamente
+
+        if (email != null) {
+            Long userId = usuarioService.getUserIdByEmail(email); // ✅ Convierte email a ID correctamente
+
+            if (userId != null) {
+                ofertaService.addFavorito(userId, ofertas.get(ofertaActual[0]).getIdoffer()); // ✅ Usas getIdoffer, perfecto
+                Notification.show("¡Añadido a favoritos!");
+            } else {
+                Notification.show("Usuario no encontrado.");
+            }
+        } else {
+            Notification.show("Debes iniciar sesión para guardar favoritos.");
+        }
     }
+
+
+
 
     private int calcularCoincidencias(OfertaF o) {
         int puntos = 0;
@@ -213,9 +230,9 @@ public class Inicio extends VerticalLayout {
 
     private List<OfertaF> obtenerOfertasDesdeBackend() {
         try {
-            OfertaF[] response = restTemplate.getForObject(BACKEND_URL, OfertaF[].class);
-            if (response != null) {
-                List<OfertaF> lista = List.of(response);
+            ResponseEntity<OfertaF[]> response = new RestTemplate().getForEntity(BACKEND_URL, OfertaF[].class);
+            if (response.getBody() != null) {
+                List<OfertaF> lista = List.of(response.getBody());
                 for (OfertaF o : lista) {
                     if (o.getFotos() == null) o.setFotos(new ArrayList<>());
                 }
