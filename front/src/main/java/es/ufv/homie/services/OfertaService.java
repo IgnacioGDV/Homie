@@ -6,8 +6,10 @@ import es.ufv.homie.model.PhotoFront;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -72,17 +74,14 @@ public class OfertaService {
         }
     }
     public List<OfertaF> getFavoritosByEmail(String email) {
-        if (email == null) return new ArrayList<>();
-        try {
-            String url = backendUrl + "/favoritos?email=" + email;
-            ResponseEntity<OfertaF[]> response = restTemplate.getForEntity(url, OfertaF[].class);
-            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-                return List.of(response.getBody());
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return new ArrayList<>();
+        return Arrays.asList(restTemplate.getForObject(backendUrl + "/favoritos/by-email?email=" + email, OfertaF[].class));
+    }
+
+    public void contactarAnfitrion(Long ofertaId, String emailRemitente) {
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromHttpUrl("http://localhost:8082/api/ofertas/contactar/" + ofertaId)
+                .queryParam("email", emailRemitente);
+        restTemplate.postForEntity(builder.toUriString(), null, String.class);
     }
 
 }

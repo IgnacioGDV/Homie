@@ -33,6 +33,8 @@ public class Inicio extends VerticalLayout {
 
     private final String BACKEND_URL = "http://localhost:8082/api/ofertas";
 
+    private static List<OfertaF> favoritosLocales = new ArrayList<>();
+
     private ComboBox<String> universityFilter;
     private ComboBox<String> locationFilter;
     private NumberField minPrice;
@@ -75,7 +77,7 @@ public class Inicio extends VerticalLayout {
         savedButton.addClassName("saved-button");
         Button aboutButton = new Button("Quienes somos", new Icon(VaadinIcon.INFO_CIRCLE), e -> getUI().ifPresent(ui -> ui.navigate("quienessomos")));
         aboutButton.addClassName("about-button");
-        Button profileButton = new Button("Login", new Icon(VaadinIcon.USER), e -> getUI().ifPresent(ui -> ui.navigate("login")));
+        Button profileButton = new Button("Logout", new Icon(VaadinIcon.USER), e -> getUI().ifPresent(ui -> ui.navigate("login")));
         profileButton.addClassName("profile-button");
 
         navBar.add(homieLogo, new HorizontalLayout(exploreButton, savedButton, aboutButton, profileButton));
@@ -97,7 +99,8 @@ public class Inicio extends VerticalLayout {
 
         filterMenu.add(new Span("Universidad"), universityFilter,
                 new Span("Ubicación"), locationFilter,
-                new Span("Rango de precio (€)"), new HorizontalLayout(minPrice, maxPrice),
+                new Span("Rango de precio (€)"),
+                crearLayoutPrecio(),
                 new Span("Edad máxima"), maxAge, genderFilter, poolFilter, applyFilters);
 
         VerticalLayout mainContent = new VerticalLayout();
@@ -118,7 +121,18 @@ public class Inicio extends VerticalLayout {
         Button guardarButton = new Button(new Icon(VaadinIcon.HEART), e -> guardarOferta(ofertaService));
         guardarButton.addClassName("more-info-button");
 
-        Button masInfoButton = new Button("Más Info");
+        Button masInfoButton = new Button("Solicita Info", e -> {
+            String email = SecurityContextHolder.getContext().getAuthentication().getName();
+            if (email != null && ofertas.size() > ofertaActual[0]) {
+                ofertaService.contactarAnfitrion(ofertas.get(ofertaActual[0]).getIdoffer(), email);
+                Notification.show("¡Le has mandado un correo al anfitrión!");
+            } else {
+                Notification.show("Debes iniciar sesión para contactar.");
+            }
+        });
+        masInfoButton.addClassName("more-info-button");
+
+
         masInfoButton.addClassName("more-info-button");
 
         HorizontalLayout botones = new HorizontalLayout(masInfoButton, guardarButton);
@@ -198,21 +212,15 @@ public class Inicio extends VerticalLayout {
     }
 
     private void guardarOferta(OfertaService ofertaService) {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName(); // ✅ Obteniendo email correctamente
-
-        if (email != null) {
-            Long userId = usuarioService.getUserIdByEmail(email); // ✅ Convierte email a ID correctamente
-
-            if (userId != null) {
-                ofertaService.addFavorito(userId, ofertas.get(ofertaActual[0]).getIdoffer()); // ✅ Usas getIdoffer, perfecto
-                Notification.show("¡Añadido a favoritos!");
-            } else {
-                Notification.show("Usuario no encontrado.");
-            }
+        OfertaF actual = ofertas.get(ofertaActual[0]);
+        if (!favoritosLocales.contains(actual)) {
+            favoritosLocales.add(actual);
+            Notification.show("¡Añadido a favoritos!");
         } else {
-            Notification.show("Debes iniciar sesión para guardar favoritos.");
+            Notification.show("Ya está en tus favoritos.");
         }
     }
+
 
 
 
@@ -257,4 +265,37 @@ public class Inicio extends VerticalLayout {
             imagenCarrusel.setSrc("icons/piso1.jpg");
         }
     }
+
+    private HorizontalLayout crearLayoutPrecio() {
+        minPrice.setWidthFull();
+        maxPrice.setWidthFull();
+
+        HorizontalLayout layout = new HorizontalLayout(minPrice, maxPrice);
+        layout.setWidthFull();
+        layout.setSpacing(true);
+        layout.setFlexGrow(1, minPrice, maxPrice); // Hace que ambos ocupen el mismo espacio sin desbordar
+
+        return layout;
+    }
+    private void enviarCorreoAnfitrion(Long ofertaId) {
+        String remitente = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        if (remitente != null && !remitente.isEmpty()) {
+            String url = "http://localhost:8082/api/ofertas/enviar-correo?ofertaId=" + ofertaId + "&fromEmail=" + remitente;
+
+            try {
+                new RestTemplate().postForEntity(url, null, Void.class);
+                Notification.show("¡Le has mandado un correo al anfitrión preguntando por información!");
+            } catch (Exception e) {
+                Notification.show("Error al enviar correo.");
+            }
+        } else {
+            Notification.show("Debes iniciar sesión para enviar correos.");
+        }
+    }
+    public static List<OfertaF> getFavoritosLocales() {
+        return favoritosLocales;
+    }
+
+
 }

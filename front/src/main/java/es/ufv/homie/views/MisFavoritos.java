@@ -6,13 +6,12 @@ import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import es.ufv.homie.model.OfertaF;
-import es.ufv.homie.services.OfertaService;
-import es.ufv.homie.services.LoginService;
 
 import java.util.List;
 
@@ -21,7 +20,7 @@ import java.util.List;
 @PageTitle("Mis Favoritos")
 public class MisFavoritos extends VerticalLayout {
 
-    public MisFavoritos(OfertaService ofertaService) {
+    public MisFavoritos() {
         setSizeFull();
         setPadding(true);
         setSpacing(true);
@@ -35,22 +34,22 @@ public class MisFavoritos extends VerticalLayout {
         Image homieLogo = new Image("icons/homiepng2.png", "Logo de Homie");
         homieLogo.addClassName("favoritos-logo");
 
-        Button exploreButton2 = new Button("Explorar Ofertas", new Icon(VaadinIcon.SEARCH),
+        Button exploreButton = new Button("Explorar Ofertas", new Icon(VaadinIcon.SEARCH),
                 e -> getUI().ifPresent(ui -> ui.navigate("inicio")));
-        exploreButton2.addClassName("favoritos-explore-button");
+        exploreButton.addClassName("favoritos-explore-button");
 
-        Button savedButton2 = new Button("Guardados", new Icon(VaadinIcon.HEART));
-        savedButton2.addClassName("favoritos-saved-button");
+        Button savedButton = new Button("Guardados", new Icon(VaadinIcon.HEART));
+        savedButton.addClassName("favoritos-saved-button");
 
-        Button aboutButton2 = new Button("Quienes somos", new Icon(VaadinIcon.INFO_CIRCLE),
+        Button aboutButton = new Button("Quienes somos", new Icon(VaadinIcon.INFO_CIRCLE),
                 e -> getUI().ifPresent(ui -> ui.navigate("quienessomos")));
-        aboutButton2.addClassName("favoritos-about-button");
+        aboutButton.addClassName("favoritos-about-button");
 
-        Button profileButton2 = new Button("Login", new Icon(VaadinIcon.USER),
+        Button profileButton = new Button("Login", new Icon(VaadinIcon.USER),
                 e -> getUI().ifPresent(ui -> ui.navigate("login")));
-        profileButton2.addClassName("favoritos-profile-button");
+        profileButton.addClassName("favoritos-profile-button");
 
-        HorizontalLayout navButtons = new HorizontalLayout(exploreButton2, savedButton2, aboutButton2, profileButton2);
+        HorizontalLayout navButtons = new HorizontalLayout(exploreButton, savedButton, aboutButton, profileButton);
         navButtons.addClassName("favoritos-nav-buttons");
 
         navBar.add(homieLogo, navButtons);
@@ -59,11 +58,9 @@ public class MisFavoritos extends VerticalLayout {
         VerticalLayout content = new VerticalLayout();
         content.addClassName("favoritos-content");
 
-        // Obtener favoritos del usuario logueado
-        String email = LoginService.getEmail(); // Implementa este método para extraer el email del usuario logueado
-        List<OfertaF> favoritos = ofertaService.getFavoritosByEmail(email);
+        List<OfertaF> favoritos = Inicio.getFavoritosLocales();
 
-        if (favoritos.isEmpty()) {
+        if (favoritos == null || favoritos.isEmpty()) {
             content.add(new Span("No tienes ofertas en favoritos."));
         } else {
             for (OfertaF ofertaF : favoritos) {
@@ -82,9 +79,15 @@ public class MisFavoritos extends VerticalLayout {
                 } else {
                     imagen.setSrc("icons/piso1.jpg");
                 }
-
                 imagen.setWidth("200px");
-                card.add(titulo, precio, universidad, ubicacion, descripcion, imagen);
+
+                Button eliminarBtn = new Button("Quitar", new Icon(VaadinIcon.TRASH), e -> {
+                    Inicio.getFavoritosLocales().remove(ofertaF);
+                    Notification.show("Oferta eliminada de favoritos");
+                    getUI().ifPresent(ui -> ui.getPage().reload());
+                });
+
+                card.add(titulo, precio, universidad, ubicacion, descripcion, imagen, eliminarBtn);
                 content.add(card);
             }
         }

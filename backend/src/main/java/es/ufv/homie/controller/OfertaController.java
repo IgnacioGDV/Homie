@@ -40,16 +40,19 @@ public class OfertaController {
         return ofertaService.obtenerTodas();
     }
 
-    @PostMapping("/favoritos/agregar")
-    public ResponseEntity<Void> agregarFavorito(@RequestParam Long userId, @RequestParam Long ofertaId) {
+    @PostMapping("/favoritos/add")
+    public ResponseEntity<?> agregarFavorito(@RequestParam Long userId, @RequestParam Long ofertaId) {
         ofertaService.guardarFavorito(userId, ofertaId);
         return ResponseEntity.ok().build();
     }
+
 
     @GetMapping("/favoritos")
     public ResponseEntity<List<Oferta>> obtenerFavoritosPorEmail(@RequestParam String email) {
         return ResponseEntity.ok(ofertaService.obtenerFavoritosPorEmail(email));
     }
+
+
 
 
 }

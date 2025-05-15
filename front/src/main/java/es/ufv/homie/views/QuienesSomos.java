@@ -45,7 +45,7 @@ public class QuienesSomos extends VerticalLayout {
         Button exploreButton1 = new Button("Explorar Ofertas", new Icon(VaadinIcon.SEARCH), e -> UI.getCurrent().navigate("inicio"));
         Button savedButton1 = new Button("Guardados", new Icon(VaadinIcon.HEART), e -> UI.getCurrent().navigate("mis-favoritos"));
         Button aboutButton1 = new Button("Quienes somos", new Icon(VaadinIcon.INFO_CIRCLE));
-        Button profileButton1= new Button("Login", new Icon(VaadinIcon.USER), e -> UI.getCurrent().navigate("login"));
+        Button profileButton1= new Button("Logout", new Icon(VaadinIcon.USER), e -> UI.getCurrent().navigate("login"));
 
         exploreButton1.addClassName("explore-button1");
         savedButton1.addClassName("saved-button1");

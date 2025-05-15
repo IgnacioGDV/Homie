@@ -8,8 +8,11 @@ body, html, #root {
 
 /* Fondo para vista de inicio */
 .inicio-background {
-    background: url("icons/casitasblancas.png") repeat;
-    background-size: 300px auto;
+    background: url("icons/paisajeazul.jpeg") ;
+    background-size: cover;           /* Ajusta la imagen para cubrir toda la pantalla */
+      background-repeat: no-repeat;     /* Evita que se repita */
+      background-position: center;      /* Centra la imagen */
+      background-attachment: fixed;
 }
 
 /* ====== NAVBAR ====== */
@@ -58,36 +61,67 @@ body, html, #root {
     overflow: hidden;
 }
 
-/* ====== MENÚ DE FILTROS ====== */
+/* ====== MENÚ DE FILTROS (MEJORADO) ====== */
 .filter-menu {
     background-color: #F3F3F7;
-    padding: 20px;
-    padding-top: 0;
+    padding: 24px 20px;
     border-right: 1px solid #DDD;
-    width: 250px;
+    width: 260px;
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 18px;
     height: 100%;
     overflow-y: auto;
     box-sizing: border-box;
+    font-family: 'Segoe UI', sans-serif;
 }
 
+.filter-menu span {
+    font-size: 0.95rem;
+    color: #000F5E;
+    font-weight: 600;
+    margin-top: 10px;
+    display: block;
+}
+
+/* Agrupación horizontal para Min y Max precio */
+.filter-menu .horizontal-layout {
+    display: flex;
+    gap: 10px;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.filter-menu .horizontal-layout vaadin-number-field {
+    flex: 1;
+    min-width: 0;
+}
+
+/* Asegura que todos los inputs y selects ocupen bien el ancho */
+.filter-menu vaadin-combo-box,
+.filter-menu vaadin-number-field,
+.filter-menu vaadin-radio-group {
+    width: 100%;
+}
+
+/* Botón aplicar más atractivo */
 .apply-filters-button {
     margin-top: auto;
     width: 100%;
     background-color: #000F5E;
     color: white;
     padding: 10px;
-    border-radius: 5px;
+    border-radius: 6px;
     cursor: pointer;
     font-weight: bold;
+    font-size: 1rem;
     transition: background-color 0.2s ease;
 }
 
 .apply-filters-button:hover {
     background-color: #1428a0;
 }
+
 
 /* ====== CONTENIDO PRINCIPAL ====== */
 .main-content {
@@ -182,11 +216,13 @@ body, html, #root {
 }
 
 .offer-title {
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: #1a1a1a;
+    font-size: 1.5rem; /* Aumentado desde 1.2rem */
+    font-weight: 800;  /* Más negrita que "bold" (700) */
+    color: #000F5E;    /* Un azul corporativo fuerte */
     margin-top: 10px;
+    text-align: center;
 }
+
 
 .offer-description {
     font-size: 0.95rem;
